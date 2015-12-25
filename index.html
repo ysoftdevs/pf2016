@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PF 2016</title>
+	<script src="js/kiwi-js-v1.4.0/kiwi.js"></script>
+</head>
+<body>
+
+<script>
+var state = new Kiwi.State('state');
+
+state.preload = function() {
+	this.addJSON('tilemap', 'tilemap.json');
+	this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
+    this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
+}
+
+state.create = function() {
+
+	this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'tilemap', this.textures.base);
+
+    this.character = new Kiwi.GameObjects.Sprite(this, this.textures.character, 2*64, 64);	
+    this.character.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 ); 
+	this.character.physics = this.character.components.add( new Kiwi.Components.ArcadePhysics( this.character, this.character.box ) );
+	this.character.physics.acceleration.y = 0;
+	this.character.physics.maxVelocity.y = 140;
+
+    this.character.animation.add('walking', [ 0, 1 ], 0.2, true);
+	this.character.animation.add('idle', [ 2, 3, 4, 5 ], 0.2, false, false);
+
+
+    this.addChild(this.tilemap.layers[0]);
+    this.addChild(this.character);
+    this.addChild(this.tilemap.layers[1]);
+    
+    
+    
+    for(var i = 21; i < this.tilemap.tileTypes.length; i++) {
+		this.tilemap.tileTypes[i].allowCollisions = Kiwi.Components.ArcadePhysics.ANY;
+	}
+    
+	this.keyboard = this.game.input.keyboard;
+
+	this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.LEFT, true);
+	this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT, true);
+    //Prevent the down key from scrolling the page
+	this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN, true);
+    
+    this.keyboard.onKeyDownOnce.add(this.keyDownOnce, this);
+	this.keyboard.onKeyUp.add(this.keyUp, this);
+    
+    this.character.input.onUp.add( this.activateScene, this );
+    
+    
+    this.myButton = new Kiwi.HUD.Widget.Button( this.game, 'PRESS ME!', 260, 50 );
+    this.game.huds.defaultHUD.addWidget( this.myButton );
+
+    this.myButton.style.color = 'white';
+    this.myButton.style.fontSize = '2em';
+    this.myButton.style.fontWeight = 'bold';
+    this.myButton.style.padding = '0.5em 1em';
+    this.myButton.style.backgroundColor = 'black';
+    this.myButton.style.cursor = 'pointer';
+
+    this.myButton.input.onDown.add( this.buttonPressed, this );
+    this.myButton.input.onUp.add( this.buttonReleased, this );
+
+    // this.myButton.input.onOver.add( this.buttonOver, this );
+    // this.myButton.input.onOut.add( this.buttonOut, this );
+}
+
+state.buttonPressed = function() {
+    this.myButton.y = 55;
+}
+
+state.buttonReleased = function() {
+    this.myButton.y = 50;
+    this.myButton.text = 'THANK YOU :)';
+    this.character.physics.velocity.x = 0;
+    this.character.physics.velocity.y = 0;
+}
+
+state.activateScene = function () {
+    this.character.physics.velocity.y = 40;
+}
+
+state.update = function () {
+	//Update all the gameobjects
+	Kiwi.State.prototype.update.call(this);
+
+	//Update physics
+	this.checkCollision();
+
+	this.updateCharacterMovement();
+	this.updateCharacterAnimation();
+	
+	// this.resetCharacter();
+}
+
+state.updateCharacterAnimation = function () {
+    
+    if(( this.character.physics.velocity.y != 0 ) || (this.character.physics.velocity.x != 0)) {
+        this.character.animation.play('walking', false);
+    } else {
+        this.character.animation.play('idle', false);
+    }
+}
+
+//Resolve collisions between the character and the first layer. 
+state.checkCollision = function () {
+	this.tilemap.layers[1].physics.overlapsTiles( this.character, true );
+}
+
+state.updateCharacterMovement = function () {
+	
+	//Move the player/character
+	if ( this.leftPressed ) {
+		this.character.scaleX = -1;
+        this.character.physics.velocity.x = -40;
+
+	} else if ( this.rightPressed ) {
+		this.character.scaleX = 1;
+        this.character.physics.velocity.x = 40;
+	} 
+
+}
+
+
+//When the key is pressed
+state.keyDownOnce = function(keyCode, key) {
+	if( keyCode === this.rightKey.keyCode ){
+		this.rightPressed = true;
+	} 
+
+	if( keyCode === this.leftKey.keyCode ){
+		this.leftPressed = true;
+	} 
+
+}
+
+
+//When the key is released
+state.keyUp = function(keyCode, key) {
+
+	if( keyCode === this.rightKey.keyCode ){
+		this.rightPressed = false;
+	} 
+
+	if( keyCode === this.leftKey.keyCode ){
+		this.leftPressed = false;
+	} 
+
+}
+
+var game = new Kiwi.Game(null, 'PF 2016', state);
+
+</script>
+
+</body>
+</html>

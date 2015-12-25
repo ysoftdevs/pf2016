@@ -1,0 +1,53 @@
+{ "height":6,
+ "layers":[
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":6,
+         "name":"ground",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":18,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "data":[0, 51, 51, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 51, 51, 51, 51, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 51, 51, 51, 21, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 51, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":6,
+         "name":"walls",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":18,
+         "x":0,
+         "y":0
+        }],
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
+ "renderorder":"right-down",
+ "tileheight":64,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"data\/images\/gfx64\/tiles.png",
+         "imageheight":400,
+         "imagewidth":640,
+         "margin":0,
+         "name":"base",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":60,
+         "tileheight":64,
+         "tilewidth":64
+        }],
+ "tilewidth":64,
+ "version":1,
+ "width":18
+}
