@@ -13,6 +13,7 @@ state.preload = function() {
 	this.addJSON('tilemap', 'tilemap.json');
 	this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
+	this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
 }
 
 state.create = function() {
@@ -28,10 +29,11 @@ state.create = function() {
     this.character.animation.add('walking', [ 0, 1 ], 0.2, true);
 	this.character.animation.add('idle', [ 2, 3, 4, 5, 4, 3 ], 0.2, true);
 
-    this.redirector = new Kiwi.GameObjects.Sprite(this, this.textures.character, 2*64 - 8, 3*64 - 8);	
+    this.redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 2*64, 3*64);	
     this.redirector.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
 	
-	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.character, 6*64 - 8, 3*64 - 8);	
+	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 6*64, 3*64);	
+	this.redirector2.cellIndex = 6;
     this.redirector2.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
 
     // Ground layer
