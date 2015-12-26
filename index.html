@@ -30,14 +30,16 @@ state.create = function() {
     this.character.animation.add('walking', [ 0, 1 ], 0.2, true);
 	this.character.animation.add('idle', [ 2, 3, 4, 5, 4, 3 ], 0.2, true);
 
-    this.redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 2*64, 3*64);	
+    this.redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 2*64);	
     this.redirector.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
-	this.redirector.input.enableDrag();
+	this.redirector.input.enableDrag(true);	
+	this.redirector.input.onDragStopped.add( this.stoppedDrag, this );
 	
-	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 6*64, 3*64);	
+	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 3*64);	
 	this.redirector2.cellIndex = 6;
     this.redirector2.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
-	this.redirector2.input.enableDrag();
+	this.redirector2.input.enableDrag(true);
+	this.redirector2.input.onDragStopped.add( this.stoppedDrag2, this );
 	
 	this.finishMarker = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 6*64, 4*64);	
     this.finishMarker.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
@@ -112,6 +114,28 @@ state.resetCharacter = function () {
     this.character.physics.velocity.y = 0;
     this.character.x = 2*64 - 8;
     this.character.y = 64 - 8;
+}
+
+state.stoppedDrag = function() {
+	if (this.redirector.x % 64 > 32) {
+		this.redirector.x += 64;
+	}
+	if (this.redirector.y % 64 > 32) {
+		this.redirector.y += 64;
+	}
+	this.redirector.x = this.redirector.x - this.redirector.x % 64;
+	this.redirector.y = this.redirector.y - this.redirector.y % 64;
+}
+
+state.stoppedDrag2 = function() {
+	if (this.redirector2.x % 64 > 32) {
+		this.redirector2.x += 64;
+	}
+	if (this.redirector2.y % 64 > 32) {
+		this.redirector2.y += 64;
+	}
+	this.redirector2.x = this.redirector2.x - this.redirector2.x % 64;
+	this.redirector2.y = this.redirector2.y - this.redirector2.y % 64;
 }
 
 state.activateScene = function () {
