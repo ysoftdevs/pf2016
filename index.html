@@ -31,22 +31,26 @@ state.create = function() {
 
     this.redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 2*64, 3*64);	
     this.redirector.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
+	this.redirector.input.enableDrag();
 	
 	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 6*64, 3*64);	
 	this.redirector2.cellIndex = 6;
     this.redirector2.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
+	this.redirector2.input.enableDrag();
 
     // Ground layer
     this.addChild(this.tilemap.layers[0]);
 
     this.addChild(this.character);
+
+    // Walls layer
+    this.addChild(this.tilemap.layers[1]);
 	
 	this.addChild(this.redirector);
 	this.addChild(this.redirector2);
 	
-    // Walls layer
-    this.addChild(this.tilemap.layers[1]);
-    
+	// Sky layer
+    this.addChild(this.tilemap.layers[2]);
     
     
     for(var i = 21; i < this.tilemap.tileTypes.length; i++) {

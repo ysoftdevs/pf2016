@@ -21,6 +21,17 @@
          "width":18,
          "x":0,
          "y":0
+        }, 
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":6,
+         "name":"sky",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":18,
+         "x":0,
+         "y":0
         }],
  "nextobjectid":4,
  "orientation":"orthogonal",
@@ -34,7 +45,7 @@
         {
          "firstgid":1,
          "image":"data\/images\/gfx64\/tiles.png",
-         "imageheight":400,
+         "imageheight":448,
          "imagewidth":640,
          "margin":0,
          "name":"base",
@@ -43,7 +54,7 @@
 
             },
          "spacing":0,
-         "tilecount":60,
+         "tilecount":70,
          "tileheight":64,
          "tilewidth":64
         }],

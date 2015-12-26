@@ -2,7 +2,7 @@ PF 2016 - Work in progress version
 ----
 
 This small game is electronic card for New Year 2016.
-Idea, graphic and mechanic is derived from open source game Enigma.
+Idea, graphic and mechanic has been derrived from open source game Enigma.
 
 Created for http://www.ysofters.com blog.
 
