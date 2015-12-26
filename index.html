@@ -76,10 +76,8 @@ state.create = function() {
     this.keyboard.onKeyDownOnce.add(this.keyDownOnce, this);
 	this.keyboard.onKeyUp.add(this.keyUp, this);
     
-    this.character.input.onUp.add( this.activateScene, this );
-    
-    
-    this.myButton = new Kiwi.HUD.Widget.Button( this.game, 'PRESS ME!', 260, 50 );
+    this.stageState = 'init';
+    this.myButton = new Kiwi.HUD.Widget.Button( this.game, 'Start', 260, 50 );
     this.game.huds.defaultHUD.addWidget( this.myButton );
 
     this.myButton.style.color = 'white';
@@ -100,13 +98,19 @@ state.velocityX = 64;
 state.velocityY = 64;
 
 state.buttonPressed = function() {
-    this.myButton.y = 55;
+    
 }
 
 state.buttonReleased = function() {
-    this.myButton.y = 50;
-    this.myButton.text = 'THANK YOU :)';
-    this.resetCharacter();
+    if (this.stageState == 'init') {
+		this.myButton.text = '...';	
+		this.activateScene();
+	} else if (this.stageState == 'stop') {
+		this.resetCharacter();
+		this.myButton.text = 'Start'
+		this.stageState = 'init';
+	}    
+    
 }
 
 state.resetCharacter = function () {
@@ -140,6 +144,7 @@ state.stoppedDrag2 = function() {
 
 state.activateScene = function () {
     this.character.physics.velocity.y = this.velocityY;
+	this.stageState = 'running';
 }
 
 state.update = function () {
@@ -169,6 +174,10 @@ state.checkCollision = function () {
 	this.tilemap.layers[1].physics.overlapsTiles( this.character, true );
 	
 	if ((this.character.physics.velocity.x == 0) && (this.character.physics.velocity.y == 0)) {
+		if (this.stageState == 'running') {
+			this.stageState = 'stop';
+			this.myButton.text = 'Restart'
+		}
 		return;
 	}
 
