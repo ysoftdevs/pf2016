@@ -21,8 +21,11 @@ state.create = function() {
 
 	this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'tilemap', this.textures.base);
 
-    this.character = new Kiwi.GameObjects.Sprite(this, this.textures.character, 2*64 - 8, 64 - 8);	
-    this.character.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
+    this.character = new Kiwi.GameObjects.Sprite(this, this.textures.character, 2*64 - 8, 64 - 8);
+	// Hitbox is detecting collision in future step.
+	// This is little bit counter intuitive. 
+	// You have to make collision box smaller at least one step.	
+    this.character.box.hitbox = new Kiwi.Geom.Rectangle( 12, 12, 58, 58 );
 	this.character.physics = this.character.components.add( new Kiwi.Components.ArcadePhysics( this.character, this.character.box ) );
 	this.character.physics.acceleration.y = 0;
 	this.character.physics.maxVelocity.y = 140;
@@ -31,18 +34,15 @@ state.create = function() {
 	this.character.animation.add('idle', [ 2, 3, 4, 5, 4, 3 ], 0.2, true);
 
     this.redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 2*64);	
-    this.redirector.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
 	this.redirector.input.enableDrag(true);	
 	this.redirector.input.onDragStopped.add( this.stoppedDrag, this );
 	
 	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 3*64);	
 	this.redirector2.cellIndex = 6;
-    this.redirector2.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
 	this.redirector2.input.enableDrag(true);
 	this.redirector2.input.onDragStopped.add( this.stoppedDrag2, this );
 	
 	this.finishMarker = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 6*64, 4*64);	
-    this.finishMarker.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
 	this.finishMarker.animation.add('idle', [ 0, 1, 2, 3, 2, 1 ], 0.3, true);
 	this.finishMarker.animation.play('idle', true);
 
@@ -172,6 +172,7 @@ state.updateCharacterAnimation = function () {
 //Resolve collisions between the character and the first layer. 
 state.checkCollision = function () {
 	this.tilemap.layers[1].physics.overlapsTiles( this.character, true );
+
 	
 	if ((this.character.physics.velocity.x == 0) && (this.character.physics.velocity.y == 0)) {
 		if (this.stageState == 'running') {
@@ -181,10 +182,33 @@ state.checkCollision = function () {
 		return;
 	}
 
-	if (this.character.box.bounds.intersects( this.redirector.box.bounds )) {
+	// Make collision detection only when ball is fully on the same place
+	var positionX = Math.round(this.character.x) + 8;
+	var positionY = Math.round(this.character.y) + 8;
+	if ((Math.round(positionX) % 64 != 0) || (Math.round(positionY)% 64 != 0)) {
+		return;
+	}
+	console.log(Math.round(positionX/64) , Math.round(this.redirector.x/64));
+
+	if (((Math.round(positionX/64) == Math.round(this.redirector.x/64) )) && (Math.round(positionY/64) == Math.round(this.redirector.y/64))) {
 		this.character.physics.velocity.x = this.velocityX;
-	} else if (this.character.box.bounds.intersects( this.redirector2.box.bounds )) {
+		this.character.physics.velocity.y = 0;
+		this.character.y = Math.round(this.character.y);
+		this.character.x = Math.round(this.character.x);
+		console.log('right');
+	} else if (((Math.round(positionX/64) == Math.round(this.redirector2.x/64) )) && (Math.round(positionY/64) == Math.round(this.redirector2.y/64))) {
+		this.character.physics.velocity.x = 0;
 		this.character.physics.velocity.y = this.velocityY;
+		this.character.y = Math.round(this.character.y);
+		this.character.x = Math.round(this.character.x);
+		console.log('down');
+	}
+		
+	if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
+		this.stageState = 'complete';
+		this.myButton.text = 'Next level'
+		this.character.physics.velocity.x = 0;
+		this.character.physics.velocity.y = 0;
 	}
 
 }
