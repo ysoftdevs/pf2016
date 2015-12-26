@@ -14,6 +14,7 @@ state.preload = function() {
 	this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
 	this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
+	this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
 }
 
 state.create = function() {
@@ -37,6 +38,11 @@ state.create = function() {
 	this.redirector2.cellIndex = 6;
     this.redirector2.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
 	this.redirector2.input.enableDrag();
+	
+	this.finishMarker = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 6*64, 4*64);	
+    this.finishMarker.box.hitbox = new Kiwi.Geom.Rectangle( 20, 20, 50, 50 );
+	this.finishMarker.animation.add('idle', [ 0, 1, 2, 3, 2, 1 ], 0.3, true);
+	this.finishMarker.animation.play('idle', true);
 
     // Ground layer
     this.addChild(this.tilemap.layers[0]);
@@ -45,9 +51,10 @@ state.create = function() {
 
     // Walls layer
     this.addChild(this.tilemap.layers[1]);
+	this.addChild(this.finishMarker);
 	
 	this.addChild(this.redirector);
-	this.addChild(this.redirector2);
+	this.addChild(this.redirector2);	
 	
 	// Sky layer
     this.addChild(this.tilemap.layers[2]);
