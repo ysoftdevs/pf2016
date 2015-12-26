@@ -7,6 +7,30 @@
 <body>
 
 <script>
+	
+var levelSelectorState = new Kiwi.State('levelSelector');
+
+levelSelectorState.create = function() {
+	this.myButton = new Kiwi.HUD.Widget.Button( this.game, 'Start', 260, 100 );
+    this.game.huds.defaultHUD.addWidget( this.myButton );
+
+    this.myButton.style.color = 'white';
+    this.myButton.style.fontSize = '2em';
+    this.myButton.style.fontWeight = 'bold';
+    this.myButton.style.padding = '0.5em 1em';
+    this.myButton.style.backgroundColor = 'black';
+    this.myButton.style.cursor = 'pointer';
+
+    
+    this.myButton.input.onUp.add( this.buttonReleased, this );
+	
+}
+
+levelSelectorState.buttonReleased = function() {
+	this.game.huds.defaultHUD.removeWidget( this.myButton );
+	game.states.switchState('state');
+}
+
 var state = new Kiwi.State('state');
 
 state.preload = function() {
@@ -109,7 +133,10 @@ state.buttonReleased = function() {
 		this.resetCharacter();
 		this.myButton.text = 'Start'
 		this.stageState = 'init';
-	}    
+	} else if (this.stageState == 'complete') {
+		this.game.huds.defaultHUD.removeWidget( this.myButton );
+		game.states.switchState('levelSelector');
+	}   
     
 }
 
@@ -182,26 +209,23 @@ state.checkCollision = function () {
 		return;
 	}
 
-	// Make collision detection only when ball is fully on the same place
+	// Make collision detection only when ball is fully on the same tile
 	var positionX = Math.round(this.character.x) + 8;
 	var positionY = Math.round(this.character.y) + 8;
 	if ((Math.round(positionX) % 64 != 0) || (Math.round(positionY)% 64 != 0)) {
 		return;
 	}
-	console.log(Math.round(positionX/64) , Math.round(this.redirector.x/64));
 
 	if (((Math.round(positionX/64) == Math.round(this.redirector.x/64) )) && (Math.round(positionY/64) == Math.round(this.redirector.y/64))) {
 		this.character.physics.velocity.x = this.velocityX;
 		this.character.physics.velocity.y = 0;
 		this.character.y = Math.round(this.character.y);
 		this.character.x = Math.round(this.character.x);
-		console.log('right');
 	} else if (((Math.round(positionX/64) == Math.round(this.redirector2.x/64) )) && (Math.round(positionY/64) == Math.round(this.redirector2.y/64))) {
 		this.character.physics.velocity.x = 0;
 		this.character.physics.velocity.y = this.velocityY;
 		this.character.y = Math.round(this.character.y);
 		this.character.x = Math.round(this.character.x);
-		console.log('down');
 	}
 		
 	if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
@@ -254,7 +278,8 @@ state.keyUp = function(keyCode, key) {
 
 }
 
-var game = new Kiwi.Game(null, 'PF 2016', state);
+var game = new Kiwi.Game(null, 'PF 2016', levelSelectorState);
+game.states.addState(state);
 
 </script>
 
