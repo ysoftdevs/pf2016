@@ -6,8 +6,8 @@ levelSelectorState.preload = function() {
 
 levelSelectorState.create = function() {
 	for (var i=1; i<levels.length+1; i++) {
-		var text = new Kiwi.GameObjects.Textfield( this, "Level " + i.toString(), 66+i*140, 60, "#000", 32, 'normal', 'Impact' );
-		var sprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 50+i*140, 50);
+		var text = new Kiwi.GameObjects.Textfield( this, "Level " + i.toString(), 16+(i-1)*140, 60, "#000", 32, 'normal', 'Impact' );
+		var sprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, (i-1)*140, 50);
 		sprite.levelIndex = i;
 		sprite.input.onUp.add( this.buttonReleased, this );	
 		this.addChild( sprite );
