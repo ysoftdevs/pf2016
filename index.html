@@ -26,6 +26,7 @@ state.preload = function() {
 	this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
 	this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
 	this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
+    this.addSpriteSheet('teleport', './data/images/gfx64/st_spitter_idle.png', 64, 64);
 }
 
 state.velocityX = 64;
@@ -34,7 +35,6 @@ state.velocityY = 64;
 state.create = function() {
     var level = levels[this.game.levelIndex - 1];
 	this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'level' + this.game.levelIndex.toString(), this.textures.base);
-    
     
     this.character = new Kiwi.GameObjects.Sprite(this, this.textures.character, 2*64 - 8, 64 - 8);
 	// Hitbox is detecting collision in future step.
@@ -53,23 +53,29 @@ state.create = function() {
 	this.finishMarker.animation.add('idle', [ 0, 1, 2, 3, 2, 1 ], 0.3, true);
 	this.finishMarker.animation.play('idle', true);
 
-    // Load level specific data
-    level.create(this);
-
     // Ground layer
     this.addChild(this.tilemap.layers[0]);
 
-    this.addChild(this.character);
+    // Load level specific data
+    level.create(this);
+
+	this.addChild(this.finishMarker);
 
     // Walls layer
     this.addChild(this.tilemap.layers[1]);
-	this.addChild(this.finishMarker);
 	
 	// Add action objects
 	this.addChild(this.redirectorGroup);
-	
+
+    this.addChild(this.character);
+
 	// Sky layer
     this.addChild(this.tilemap.layers[2]);
+
+    // Create collision layer
+    for(var i = 21; i < this.tilemap.tileTypes.length; i++) {
+		this.tilemap.tileTypes[i].allowCollisions = Kiwi.Components.ArcadePhysics.ANY;
+	}
         
 	this.keyboard = this.game.input.keyboard;
 
@@ -214,8 +220,13 @@ state.checkCollision = function () {
 	for ( var i = 0; i < redirectors.length; i++ ) {
 		var redirector = redirectors[i];
 		if (((Math.round(positionX/64) == Math.round(redirector.x/64) )) && (Math.round(positionY/64) == Math.round(redirector.y/64))) {
-			this.character.physics.velocity.x = redirector.affectVelocityX;
-			this.character.physics.velocity.y = redirector.affectVelocityY;
+            if (redirector.type == 'vector') {
+                this.character.physics.velocity.x = redirector.affectVelocityX;
+                this.character.physics.velocity.y = redirector.affectVelocityY;
+            } else if (redirector.type == 'teleport') {
+                this.character.x = redirector.affectedX - 8;
+                this.character.y = redirector.affectedY - 8;
+            }
 			this.character.y = Math.round(this.character.y);
 			this.character.x = Math.round(this.character.x);
 		}
