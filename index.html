@@ -14,24 +14,19 @@
 	
 var levelSelectorState = new Kiwi.State('levelSelector');
 
+levelSelectorState.preload = function() {
+	this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
+}
+
 levelSelectorState.create = function() {
-	this.myButton = new Kiwi.HUD.Widget.Button( this.game, 'Start', 260, 100 );
-    this.game.huds.defaultHUD.addWidget( this.myButton );
-
-    this.myButton.style.color = 'white';
-    this.myButton.style.fontSize = '2em';
-    this.myButton.style.fontWeight = 'bold';
-    this.myButton.style.padding = '0.5em 1em';
-    this.myButton.style.backgroundColor = 'black';
-    this.myButton.style.cursor = 'pointer';
-
-    
-    this.myButton.input.onUp.add( this.buttonReleased, this );
-	
+	this.text = new Kiwi.GameObjects.Textfield( this, "Start", 50, 60, "#000", 32, 'normal', 'Impact' );
+	this.sprite = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 50, 50);
+	this.sprite.input.onUp.add( this.buttonReleased, this );	
+	this.addChild( this.sprite );
+	this.addChild( this.text );
 }
 
 levelSelectorState.buttonReleased = function() {
-	this.game.huds.defaultHUD.removeWidget( this.myButton );
 	game.states.switchState('state');
 }
 
@@ -105,21 +100,12 @@ state.create = function() {
 	this.keyboard.onKeyUp.add(this.keyUp, this);
     
     this.stageState = 'init';
-    this.myButton = new Kiwi.HUD.Widget.Button( this.game, 'Start', 260, 50 );
-    this.game.huds.defaultHUD.addWidget( this.myButton );
-
-    this.myButton.style.color = 'white';
-    this.myButton.style.fontSize = '2em';
-    this.myButton.style.fontWeight = 'bold';
-    this.myButton.style.padding = '0.5em 1em';
-    this.myButton.style.backgroundColor = 'black';
-    this.myButton.style.cursor = 'pointer';
-
-    this.myButton.input.onDown.add( this.buttonPressed, this );
-    this.myButton.input.onUp.add( this.buttonReleased, this );
-
-    // this.myButton.input.onOver.add( this.buttonOver, this );
-    // this.myButton.input.onOut.add( this.buttonOut, this );
+	
+	this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 260, 50, "#000", 32, 'normal', 'Impact' );
+	this.sprite = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 260, 50);
+	this.sprite.input.onUp.add( this.buttonReleased, this );	
+	this.addChild( this.sprite );
+	this.addChild( this.myButton );
 }
 
 state.velocityX = 64;
@@ -138,7 +124,6 @@ state.buttonReleased = function() {
 		this.myButton.text = 'Start'
 		this.stageState = 'init';
 	} else if (this.stageState == 'complete') {
-		this.game.huds.defaultHUD.removeWidget( this.myButton );
 		game.states.switchState('levelSelector');
 	}   
     
