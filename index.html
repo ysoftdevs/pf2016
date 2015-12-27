@@ -14,12 +14,13 @@
     <script src="js/app/level-03.js"></script>
     <script src="js/app/level-04.js"></script>
     <script src="js/app/level-05.js"></script>
+    <script src="js/app/level-06.js"></script>
 </head>
 <body>
 
 <script>
 var state = new Kiwi.State('state');
-var levels = [level1, level2, level3, level4, level5];
+var levels = [level1, level2, level3, level4, level5, level6];
 
 state.preload = function() {
 	this.addJSON('level1', 'data/levels/level-01.json');
@@ -27,6 +28,7 @@ state.preload = function() {
     this.addJSON('level3', 'data/levels/level-03.json');
     this.addJSON('level4', 'data/levels/level-04.json');
     this.addJSON('level5', 'data/levels/level-05.json');
+    this.addJSON('level6', 'data/levels/level-06.json');
 	this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
 	this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
