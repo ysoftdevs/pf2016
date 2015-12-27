@@ -15,12 +15,12 @@
 var levelSelectorState = new Kiwi.State('levelSelector');
 
 levelSelectorState.preload = function() {
-	this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
+	this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
 }
 
 levelSelectorState.create = function() {
-	this.text = new Kiwi.GameObjects.Textfield( this, "Start", 50, 60, "#000", 32, 'normal', 'Impact' );
-	this.sprite = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 50, 50);
+	this.text = new Kiwi.GameObjects.Textfield( this, "Start", 66, 60, "#000", 32, 'normal', 'Impact' );
+	this.sprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 50, 50);
 	this.sprite.input.onUp.add( this.buttonReleased, this );	
 	this.addChild( this.sprite );
 	this.addChild( this.text );
@@ -38,6 +38,7 @@ state.preload = function() {
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
 	this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
 	this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
+	this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
 }
 
 state.create = function() {
@@ -101,9 +102,10 @@ state.create = function() {
     
     this.stageState = 'init';
 	
-	this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 260, 50, "#000", 32, 'normal', 'Impact' );
-	this.sprite = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 260, 50);
+	this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 9*64+16, 60, "#000", 32, 'normal', 'Impact' );
+	this.sprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 9*64, 50);
 	this.sprite.input.onUp.add( this.buttonReleased, this );	
+	this.character.input.onUp.add( this.buttonReleased, this );
 	this.addChild( this.sprite );
 	this.addChild( this.myButton );
 }
@@ -219,7 +221,7 @@ state.checkCollision = function () {
 		
 	if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
 		this.stageState = 'complete';
-		this.myButton.text = 'Next level'
+		this.myButton.text = 'Next->'
 		this.character.physics.velocity.x = 0;
 		this.character.physics.velocity.y = 0;
 	}
