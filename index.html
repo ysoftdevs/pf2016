@@ -7,29 +7,11 @@
 	<meta name="description" content="PF 2016 greeting - puzzle game - set direction for ball" />
 	
 	<script src="js/kiwi-js-v1.4.0/kiwi.js"></script>
+	<script src="js/app/level-selector.js"></script>
 </head>
 <body>
 
 <script>
-	
-var levelSelectorState = new Kiwi.State('levelSelector');
-
-levelSelectorState.preload = function() {
-	this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
-}
-
-levelSelectorState.create = function() {
-	this.text = new Kiwi.GameObjects.Textfield( this, "Start", 66, 60, "#000", 32, 'normal', 'Impact' );
-	this.sprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 50, 50);
-	this.sprite.input.onUp.add( this.buttonReleased, this );	
-	this.addChild( this.sprite );
-	this.addChild( this.text );
-}
-
-levelSelectorState.buttonReleased = function() {
-	game.states.switchState('state');
-}
-
 var state = new Kiwi.State('state');
 
 state.preload = function() {
@@ -110,9 +92,6 @@ state.create = function() {
     //Prevent the down key from scrolling the page
 	this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN, true);
     
-    this.keyboard.onKeyDownOnce.add(this.keyDownOnce, this);
-	this.keyboard.onKeyUp.add(this.keyUp, this);
-    
     this.stageState = 'init';
 	
 	this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 9*64+16, 60, "#000", 32, 'normal', 'Impact' );
@@ -123,8 +102,8 @@ state.create = function() {
 	this.addChild( this.myButton );
 }
 
-state.buttonReleased = function() {
-    if (this.stageState == 'init') {
+state.buttonReleased = function(sprite) {	
+	if (this.stageState == 'init') {
 		this.myButton.text = '...';	
 		this.activateScene();
 	} else if (this.stageState == 'stop') {
@@ -133,8 +112,7 @@ state.buttonReleased = function() {
 		this.stageState = 'init';
 	} else if (this.stageState == 'complete') {
 		game.states.switchState('levelSelector');
-	}   
-    
+	}
 }
 
 state.resetCharacter = function () {
@@ -193,7 +171,7 @@ state.stoppedDrag = function(sprite) {
 				break;
 			}
 		}
-	}	
+	}
 }
 
 state.activateScene = function () {
@@ -274,37 +252,11 @@ state.updateCharacterMovement = function () {
 		this.character.scaleX = 1;
         this.character.physics.velocity.x = this.velocityY;
 	} 
-	
-}
-
-
-//When the key is pressed
-state.keyDownOnce = function(keyCode, key) {
-	if( keyCode === this.rightKey.keyCode ){
-		this.rightPressed = true;
-	} 
-
-	if( keyCode === this.leftKey.keyCode ){
-		this.leftPressed = true;
-	} 
-
-}
-
-
-//When the key is released
-state.keyUp = function(keyCode, key) {
-
-	if( keyCode === this.rightKey.keyCode ){
-		this.rightPressed = false;
-	} 
-
-	if( keyCode === this.leftKey.keyCode ){
-		this.leftPressed = false;
-	} 
 
 }
 
 var game = new Kiwi.Game(null, 'PF 2016', levelSelectorState);
+game.levelIndex = 0;
 game.states.addState(state);
 
 </script>
