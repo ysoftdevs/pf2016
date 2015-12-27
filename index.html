@@ -11,22 +11,27 @@
 	<script src="js/app/level-selector.js"></script>
 	<script src="js/app/level-01.js"></script>
     <script src="js/app/level-02.js"></script>
+    <script src="js/app/level-03.js"></script>
+    <script src="js/app/level-04.js"></script>
 </head>
 <body>
 
 <script>
 var state = new Kiwi.State('state');
-var levels = [level1, level2];
+var levels = [level1, level2, level3, level4];
 
 state.preload = function() {
 	this.addJSON('level1', 'data/levels/level-01.json');
 	this.addJSON('level2', 'data/levels/level-02.json');
+    this.addJSON('level3', 'data/levels/level-03.json');
+    this.addJSON('level4', 'data/levels/level-04.json');
 	this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
 	this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
 	this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
 	this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
     this.addSpriteSheet('teleport', './data/images/gfx64/st_spitter_idle.png', 64, 64);
+    this.addSpriteSheet('box', './data/images/gfx64/st_box_wood.png', 64, 64);
 }
 
 state.velocityX = 64;
@@ -36,7 +41,11 @@ state.create = function() {
     var level = levels[this.game.levelIndex - 1];
 	this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'level' + this.game.levelIndex.toString(), this.textures.base);
     
-    this.character = new Kiwi.GameObjects.Sprite(this, this.textures.character, 2*64 - 8, 64 - 8);
+    this.character = new Kiwi.GameObjects.Sprite(this, this.textures.character, 0, 0);
+    this.character.initialX = 2*64;
+    this.character.initialY = 64;
+    this.character.initialVelocityX = 0;
+    this.character.initialVelocityY = this.velocityY;
 	// Hitbox is detecting collision in future step.
 	// This is little bit counter intuitive. 
 	// You have to make collision box smaller at least one step.	
@@ -58,6 +67,9 @@ state.create = function() {
 
     // Load level specific data
     level.create(this);
+    
+    // Fix character coordinates and speed
+    this.resetCharacter();
 
 	this.addChild(this.finishMarker);
 
@@ -109,8 +121,8 @@ state.buttonReleased = function(sprite) {
 state.resetCharacter = function () {
     this.character.physics.velocity.x = 0;
     this.character.physics.velocity.y = 0;
-    this.character.x = 2*64 - 8;
-    this.character.y = 64 - 8;
+    this.character.x = this.character.initialX - 8;
+    this.character.y = this.character.initialY - 8;
 }
 
 state.startedDrag = function(sprite) {
@@ -166,7 +178,8 @@ state.stoppedDrag = function(sprite) {
 }
 
 state.activateScene = function () {
-    this.character.physics.velocity.y = this.velocityY;
+    this.character.physics.velocity.x = this.character.initialVelocityX;
+    this.character.physics.velocity.y = this.character.initialVelocityY;
 	this.stageState = 'running';
 }
 
@@ -177,7 +190,6 @@ state.update = function () {
 	//Update physics
 	this.checkCollision();
 
-	this.updateCharacterMovement();
 	this.updateCharacterAnimation();
 	
 	// this.resetCharacter();
@@ -241,20 +253,6 @@ state.checkCollision = function () {
 		this.character.physics.velocity.x = 0;
 		this.character.physics.velocity.y = 0;
 	}
-
-}
-
-state.updateCharacterMovement = function () {
-	
-	//Move the player/character
-	if ( this.leftPressed ) {
-		this.character.scaleX = -1;
-        this.character.physics.velocity.x = -this.velocityX;
-
-	} else if ( this.rightPressed ) {
-		this.character.scaleX = 1;
-        this.character.physics.velocity.x = this.velocityY;
-	} 
 
 }
 
