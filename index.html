@@ -65,7 +65,8 @@ state.create = function() {
 	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 3*64);	
 	this.redirector2.cellIndex = 6;
 	this.redirector2.input.enableDrag(true);
-	this.redirector2.input.onDragStopped.add( this.stoppedDrag2, this );
+	this.redirector2.input.onDragStarted.add(this.startedDrag, this);
+	this.redirector2.input.onDragStopped.add(this.stoppedDrag, this );
 	
 	this.finishMarker = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 6*64, 4*64);	
 	this.finishMarker.animation.add('idle', [ 0, 1, 2, 3, 2, 1 ], 0.3, true);
@@ -139,38 +140,27 @@ state.resetCharacter = function () {
     this.character.y = 64 - 8;
 }
 
-state.startedDrag = function() {
-	this.redirector.formerX = this.redirector.x;
-	this.redirector.formerY = this.redirector.y;	 
+state.startedDrag = function(sprite) {
+	sprite.formerX = sprite.x;
+	sprite.formerY = sprite.y;	 
 }
 
-state.stoppedDrag = function() {
-	if (this.redirector.x % 64 > 32) {
-		this.redirector.x += 64;
+state.stoppedDrag = function(sprite) {
+	if (sprite.x % 64 > 32) {
+		sprite.x += 64;
 	}
-	if (this.redirector.y % 64 > 32) {
-		this.redirector.y += 64;
+	if (sprite.y % 64 > 32) {
+		sprite.y += 64;
 	}
-	this.redirector.x = this.redirector.x - this.redirector.x % 64;
-	this.redirector.y = this.redirector.y - this.redirector.y % 64;
+	sprite.x = sprite.x - sprite.x % 64;
+	sprite.y = sprite.y - sprite.y % 64;
 	
 	// Make sure that we drop tile only on valid ground
-	var tile = this.tilemap.layers[0].getTileFromXY(this.redirector.x / 64 , this.redirector.y /64);
+	var tile = this.tilemap.layers[0].getTileFromXY(sprite.x / 64 , sprite.y /64);
 	if ((tile.index == 0) || (tile == null)) {
-		this.redirector.x = this.redirector.formerX;
-		this.redirector.y = this.redirector.formerY;
+		sprite.x = sprite.formerX;
+		sprite.y = sprite.formerY;
 	}
-}
-
-state.stoppedDrag2 = function() {
-	if (this.redirector2.x % 64 > 32) {
-		this.redirector2.x += 64;
-	}
-	if (this.redirector2.y % 64 > 32) {
-		this.redirector2.y += 64;
-	}
-	this.redirector2.x = this.redirector2.x - this.redirector2.x % 64;
-	this.redirector2.y = this.redirector2.y - this.redirector2.y % 64;
 }
 
 state.activateScene = function () {
