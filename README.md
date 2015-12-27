@@ -18,6 +18,7 @@ Kiwi.JS
 Graphic assets 
 
 - Open souce game Enigma - http://www.nongnu.org/enigma/
+- Font Awesome - http://fortawesome.github.io/
 
 Image operations 
 
