@@ -41,6 +41,9 @@ state.preload = function() {
 	this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
 }
 
+state.velocityX = 64;
+state.velocityY = 64;
+
 state.create = function() {
 
 	this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'tilemap', this.textures.base);
@@ -57,20 +60,28 @@ state.create = function() {
     this.character.animation.add('walking', [ 0, 1 ], 0.2, true);
 	this.character.animation.add('idle', [ 2, 3, 4, 5, 4, 3 ], 0.2, true);
 
-    this.redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 2*64);	
-	this.redirector.input.enableDrag(true);	
-	this.redirector.input.onDragStarted.add(this.startedDrag, this);
-	this.redirector.input.onDragStopped.add(this.stoppedDrag, this );
+    var redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 2*64);	
+	redirector.affectVelocityX = this.velocityX;
+	redirector.affectVelocityY = 0;
+	redirector.input.enableDrag(true);	
+	redirector.input.onDragStarted.add(this.startedDrag, this);
+	redirector.input.onDragStopped.add(this.stoppedDrag, this );
 	
-	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 3*64);	
-	this.redirector2.cellIndex = 6;
-	this.redirector2.input.enableDrag(true);
-	this.redirector2.input.onDragStarted.add(this.startedDrag, this);
-	this.redirector2.input.onDragStopped.add(this.stoppedDrag, this );
+	var redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 3*64);	
+	redirector2.affectVelocityX = 0;
+	redirector2.affectVelocityY = this.velocityY;
+	redirector2.cellIndex = 6;
+	redirector2.input.enableDrag(true);
+	redirector2.input.onDragStarted.add(this.startedDrag, this);
+	redirector2.input.onDragStopped.add(this.stoppedDrag, this );
 	
 	this.finishMarker = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 6*64, 4*64);	
 	this.finishMarker.animation.add('idle', [ 0, 1, 2, 3, 2, 1 ], 0.3, true);
 	this.finishMarker.animation.play('idle', true);
+	
+	this.redirectorGroup = new Kiwi.Group( this );
+	this.redirectorGroup.addChild(redirector);
+	this.redirectorGroup.addChild(redirector2);
 
     // Ground layer
     this.addChild(this.tilemap.layers[0]);
@@ -81,8 +92,8 @@ state.create = function() {
     this.addChild(this.tilemap.layers[1]);
 	this.addChild(this.finishMarker);
 	
-	this.addChild(this.redirector);
-	this.addChild(this.redirector2);	
+	// Add action objects
+	this.addChild(this.redirectorGroup);
 	
 	// Sky layer
     this.addChild(this.tilemap.layers[2]);
@@ -112,13 +123,6 @@ state.create = function() {
 	this.addChild( this.myButton );
 }
 
-state.velocityX = 64;
-state.velocityY = 64;
-
-state.buttonPressed = function() {
-    
-}
-
 state.buttonReleased = function() {
     if (this.stageState == 'init') {
 		this.myButton.text = '...';	
@@ -145,6 +149,20 @@ state.startedDrag = function(sprite) {
 	sprite.formerY = sprite.y;	 
 }
 
+/**
+ * Reverse effect of drag operaion. Set original coordinates.
+ */
+state.resetDrag = function(sprite) {
+	sprite.x = sprite.formerX;
+	sprite.y = sprite.formerY;
+}
+
+/**
+ * Perform adjustments of coordinates for drop operation.
+ * Make sure that object is dropped on valid place and check
+ * collision with other objects. In case of failure revert
+ * to former coordinates.
+ */
 state.stoppedDrag = function(sprite) {
 	if (sprite.x % 64 > 32) {
 		sprite.x += 64;
@@ -158,9 +176,24 @@ state.stoppedDrag = function(sprite) {
 	// Make sure that we drop tile only on valid ground
 	var tile = this.tilemap.layers[0].getTileFromXY(sprite.x / 64 , sprite.y /64);
 	if ((tile.index == 0) || (tile == null)) {
-		sprite.x = sprite.formerX;
-		sprite.y = sprite.formerY;
-	}
+		this.resetDrag(sprite);
+	} else {
+		// Make sure that we are not dropping on another redirector object
+		var redirectors = this.redirectorGroup.members;
+		for ( var i = 0; i < redirectors.length; i++ ) {
+			var redirector = redirectors[i];
+			
+			// Skip comparision of self
+			if (sprite === redirector) {
+				continue;
+			}
+			
+			if ((sprite.x == redirector.x) && (sprite.y == redirector.y)) {
+				this.resetDrag(sprite);
+				break;
+			}
+		}
+	}	
 }
 
 state.activateScene = function () {
@@ -210,17 +243,16 @@ state.checkCollision = function () {
 		return;
 	}
 
-	if (((Math.round(positionX/64) == Math.round(this.redirector.x/64) )) && (Math.round(positionY/64) == Math.round(this.redirector.y/64))) {
-		this.character.physics.velocity.x = this.velocityX;
-		this.character.physics.velocity.y = 0;
-		this.character.y = Math.round(this.character.y);
-		this.character.x = Math.round(this.character.x);
-	} else if (((Math.round(positionX/64) == Math.round(this.redirector2.x/64) )) && (Math.round(positionY/64) == Math.round(this.redirector2.y/64))) {
-		this.character.physics.velocity.x = 0;
-		this.character.physics.velocity.y = this.velocityY;
-		this.character.y = Math.round(this.character.y);
-		this.character.x = Math.round(this.character.x);
-	}
+	var redirectors = this.redirectorGroup.members;
+	for ( var i = 0; i < redirectors.length; i++ ) {
+		var redirector = redirectors[i];
+		if (((Math.round(positionX/64) == Math.round(redirector.x/64) )) && (Math.round(positionY/64) == Math.round(redirector.y/64))) {
+			this.character.physics.velocity.x = redirector.affectVelocityX;
+			this.character.physics.velocity.y = redirector.affectVelocityY;
+			this.character.y = Math.round(this.character.y);
+			this.character.x = Math.round(this.character.x);
+		}
+	} 
 		
 	if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
 		this.stageState = 'complete';
