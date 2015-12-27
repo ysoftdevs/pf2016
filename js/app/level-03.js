@@ -2,7 +2,7 @@ var level3 = {};
 level3.create = function(context) {
     // Create redirector objects
     addRedirector(context, 6, 3, 1, 0, 0);
-    addRedirector(context, 4, 3, 0, 1, 6);
+    addRedirector(context, 4, 3, 0, -1, 3);
         
     // Define player coordinates
     context.character.x = 2*64 - 8;
