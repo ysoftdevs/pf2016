@@ -12,6 +12,6 @@ level3.create = function(context) {
     
     // Define finish coordinates
     context.finishMarker.x = 6*64;
-    context.finishMarker.y = 4*64;
+    context.finishMarker.y = 1*64;
 }
 	
