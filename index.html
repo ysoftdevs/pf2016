@@ -7,15 +7,20 @@
 	<meta name="description" content="PF 2016 greeting - puzzle game - set direction for ball" />
 	
 	<script src="js/kiwi-js-v1.4.0/kiwi.js"></script>
+    <script src="js/app/level-tools.js"></script>
 	<script src="js/app/level-selector.js"></script>
+	<script src="js/app/level-01.js"></script>
+    <script src="js/app/level-02.js"></script>
 </head>
 <body>
 
 <script>
 var state = new Kiwi.State('state');
+var levels = [level1, level2];
 
 state.preload = function() {
-	this.addJSON('tilemap', 'tilemap.json');
+	this.addJSON('level1', 'data/levels/level-01.json');
+	this.addJSON('level2', 'data/levels/level-02.json');
 	this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
 	this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
@@ -27,43 +32,29 @@ state.velocityX = 64;
 state.velocityY = 64;
 
 state.create = function() {
-
-	this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'tilemap', this.textures.base);
-
+    var level = levels[this.game.levelIndex - 1];
+	this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'level' + this.game.levelIndex.toString(), this.textures.base);
+    
+    
     this.character = new Kiwi.GameObjects.Sprite(this, this.textures.character, 2*64 - 8, 64 - 8);
 	// Hitbox is detecting collision in future step.
 	// This is little bit counter intuitive. 
 	// You have to make collision box smaller at least one step.	
     this.character.box.hitbox = new Kiwi.Geom.Rectangle( 12, 12, 58, 58 );
 	this.character.physics = this.character.components.add( new Kiwi.Components.ArcadePhysics( this.character, this.character.box ) );
-	this.character.physics.acceleration.y = 0;
-	this.character.physics.maxVelocity.y = 140;
 
     this.character.animation.add('walking', [ 0, 1 ], 0.2, true);
-	this.character.animation.add('idle', [ 2, 3, 4, 5, 4, 3 ], 0.2, true);
+	this.character.animation.add('idle', [ 2, 3, 4, 5, 6, 5, 4, 3 ], 0.2, true);
+	this.character.animation.add('failed', [ 11, 10, 9, 8, 7, 8, 9, 10], 0.2, true);
 
-    var redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 2*64);	
-	redirector.affectVelocityX = this.velocityX;
-	redirector.affectVelocityY = 0;
-	redirector.input.enableDrag(true);	
-	redirector.input.onDragStarted.add(this.startedDrag, this);
-	redirector.input.onDragStopped.add(this.stoppedDrag, this );
-	
-	var redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 3*64);	
-	redirector2.affectVelocityX = 0;
-	redirector2.affectVelocityY = this.velocityY;
-	redirector2.cellIndex = 6;
-	redirector2.input.enableDrag(true);
-	redirector2.input.onDragStarted.add(this.startedDrag, this);
-	redirector2.input.onDragStopped.add(this.stoppedDrag, this );
-	
+	this.redirectorGroup = new Kiwi.Group( this );
+    	
 	this.finishMarker = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 6*64, 4*64);	
 	this.finishMarker.animation.add('idle', [ 0, 1, 2, 3, 2, 1 ], 0.3, true);
 	this.finishMarker.animation.play('idle', true);
-	
-	this.redirectorGroup = new Kiwi.Group( this );
-	this.redirectorGroup.addChild(redirector);
-	this.redirectorGroup.addChild(redirector2);
+
+    // Load level specific data
+    level.create(this);
 
     // Ground layer
     this.addChild(this.tilemap.layers[0]);
@@ -79,12 +70,7 @@ state.create = function() {
 	
 	// Sky layer
     this.addChild(this.tilemap.layers[2]);
-    
-    
-    for(var i = 21; i < this.tilemap.tileTypes.length; i++) {
-		this.tilemap.tileTypes[i].allowCollisions = Kiwi.Components.ArcadePhysics.ANY;
-	}
-    
+        
 	this.keyboard = this.game.input.keyboard;
 
 	this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.LEFT, true);
@@ -94,12 +80,11 @@ state.create = function() {
     
     this.stageState = 'init';
 	
-	this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 9*64+16, 60, "#000", 32, 'normal', 'Impact' );
-	this.sprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 9*64, 50);
-	this.sprite.input.onUp.add( this.buttonReleased, this );	
+	this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 6*64+16, 60, "#000", 32, 'normal', 'Impact' );
+	this.myButtonSprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 6*64, 50);
+	this.myButtonSprite.input.onUp.add( this.buttonReleased, this );	
+		
 	this.character.input.onUp.add( this.buttonReleased, this );
-	this.addChild( this.sprite );
-	this.addChild( this.myButton );
 }
 
 state.buttonReleased = function(sprite) {	
@@ -197,7 +182,11 @@ state.updateCharacterAnimation = function () {
     if(( this.character.physics.velocity.y != 0 ) || (this.character.physics.velocity.x != 0)) {
         this.character.animation.play('walking', false);
     } else {
-        this.character.animation.play('idle', false);
+		if (this.stageState == 'stop') {
+			this.character.animation.play('failed', false);	
+		} else {
+        	this.character.animation.play('idle', false);
+		}
     }
 }
 
@@ -235,6 +224,9 @@ state.checkCollision = function () {
 	if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
 		this.stageState = 'complete';
 		this.myButton.text = 'Next->'
+		this.addChild( this.myButtonSprite );
+		this.addChild( this.myButton );
+
 		this.character.physics.velocity.x = 0;
 		this.character.physics.velocity.y = 0;
 	}
