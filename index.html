@@ -59,7 +59,8 @@ state.create = function() {
 
     this.redirector = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 2*64);	
 	this.redirector.input.enableDrag(true);	
-	this.redirector.input.onDragStopped.add( this.stoppedDrag, this );
+	this.redirector.input.onDragStarted.add(this.startedDrag, this);
+	this.redirector.input.onDragStopped.add(this.stoppedDrag, this );
 	
 	this.redirector2 = new Kiwi.GameObjects.Sprite(this, this.textures.oneWay, 9*64, 3*64);	
 	this.redirector2.cellIndex = 6;
@@ -138,6 +139,11 @@ state.resetCharacter = function () {
     this.character.y = 64 - 8;
 }
 
+state.startedDrag = function() {
+	this.redirector.formerX = this.redirector.x;
+	this.redirector.formerY = this.redirector.y;	 
+}
+
 state.stoppedDrag = function() {
 	if (this.redirector.x % 64 > 32) {
 		this.redirector.x += 64;
@@ -147,6 +153,13 @@ state.stoppedDrag = function() {
 	}
 	this.redirector.x = this.redirector.x - this.redirector.x % 64;
 	this.redirector.y = this.redirector.y - this.redirector.y % 64;
+	
+	// Make sure that we drop tile only on valid ground
+	var tile = this.tilemap.layers[0].getTileFromXY(this.redirector.x / 64 , this.redirector.y /64);
+	if ((tile.index == 0) || (tile == null)) {
+		this.redirector.x = this.redirector.formerX;
+		this.redirector.y = this.redirector.formerY;
+	}
 }
 
 state.stoppedDrag2 = function() {
