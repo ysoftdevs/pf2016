@@ -287,14 +287,43 @@ level10.create = function(context) {
 var level11 = {};
 level11.create = function(context) {
     // Define start coordinates
-    context.character.initialX = 4*64;
+    context.character.initialX = 1*64;
     context.character.initialY = 4*64;
-    context.character.initialVelocityX = 64;
-    context.character.initialVelocityY = 0;
+    context.character.initialVelocityX = 0;
+    context.character.initialVelocityY = -64;
     
     // Define finish coordinates
-    context.finishMarker.x = 9*64;
-    context.finishMarker.y = 1*64;
+    context.finishMarker.x = 11*64;
+    context.finishMarker.y = 4*64;
+    
+    var laser = addLaser(context, 8, 3, 'down', false);
+    var laser2 = addLaser(context, 8, 5, 'up', false);
+    
+    var laserSwitch = addSwitch(context, 1, 2, 2);
+    var laserSwitch2 = addSwitch(context, 6, 2, 2);
+    var laserBeam = addLaserBeam(context, 8, 4, 1, false);
+    laserSwitch.linkedItems = [laser, laser2, laserSwitch2, laserBeam ];
+    laserSwitch2.linkedItems = [laser, laser2, laserSwitch, laserBeam ];
+    
+    // Right
+    addRedirector(context, 5, 1, 1, 0, 0);
+    addRedirector(context, 5, 2, 1, 0, 0);
+    addRedirector(context, 5, 3, 1, 0, 0);
+    addRedirector(context, 5, 4, 1, 0, 0);
+    addRedirector(context, 4, 4, 1, 0, 0);
+
+    // Up
+    addRedirector(context, 7, 1, 0, -1, 3);
+    addRedirector(context, 7, 2, 0, -1, 3);
+    
+    // Down
+    addRedirector(context, 7, 4, 0, 1, 6);
+    addRedirector(context, 7, 3, 0, 1, 6);
+    addRedirector(context, 3, 4, 0, 1, 6);
+    
+    // Left
+    addRedirector(context, 8, 4, 0, -1, 9);
+    addRedirector(context, 9, 4, 0, -1, 9);
 };
 
 var level12 = {};
