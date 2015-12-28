@@ -9,21 +9,13 @@
     <script src="js/kiwi-js-v1.4.0/kiwi.js"></script>
     <script src="js/app/level-tools.js"></script>
     <script src="js/app/level-selector.js"></script>
-    <script src="js/app/level-01.js"></script>
-    <script src="js/app/level-02.js"></script>
-    <script src="js/app/level-03.js"></script>
-    <script src="js/app/level-04.js"></script>
-    <script src="js/app/level-05.js"></script>
-    <script src="js/app/level-06.js"></script>
-    <script src="js/app/level-07.js"></script>
-    <script src="js/app/level-08.js"></script>
-    <script src="js/app/level-09.js"></script>
+    <script src="js/app/levels-01-12.js"></script>
 </head>
 <body>
 
 <script>
 var state = new Kiwi.State('state');
-var levels = [level1, level2, level3, level4, level5, level6, level7, level8, level9];
+var levels = [level1, level2, level3, level4, level5, level6, level7, level8, level9, level10];
 
 state.preload = function() {
     this.addJSON('level1', 'data/levels/level-01.json');
@@ -35,6 +27,7 @@ state.preload = function() {
     this.addJSON('level7', 'data/levels/level-07.json');
     this.addJSON('level8', 'data/levels/level-08.json');
     this.addJSON('level9', 'data/levels/level-09.json');
+    this.addJSON('level10', 'data/levels/level-10.json');
     this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
     this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
