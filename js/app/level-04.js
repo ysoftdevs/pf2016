@@ -24,7 +24,7 @@ level4.create = function(context) {
 
     // Create redirector objects
     addRedirector(context, 9, 1, -1, 0, 9);
-    addRedirector(context, 9, 3, 1, 0, 0);
+    addRedirector(context, 5, 1, 1, 0, 0);
     addRedirector(context, 10, 2, 0, -1, 3);
 
 }
