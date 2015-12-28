@@ -15,12 +15,13 @@
     <script src="js/app/level-04.js"></script>
     <script src="js/app/level-05.js"></script>
     <script src="js/app/level-06.js"></script>
+    <script src="js/app/level-07.js"></script>
 </head>
 <body>
 
 <script>
 var state = new Kiwi.State('state');
-var levels = [level1, level2, level3, level4, level5, level6];
+var levels = [level1, level2, level3, level4, level5, level6, level7];
 
 state.preload = function() {
     this.addJSON('level1', 'data/levels/level-01.json');
@@ -29,6 +30,7 @@ state.preload = function() {
     this.addJSON('level4', 'data/levels/level-04.json');
     this.addJSON('level5', 'data/levels/level-05.json');
     this.addJSON('level6', 'data/levels/level-06.json');
+    this.addJSON('level7', 'data/levels/level-07.json');
     this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
     this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
@@ -114,7 +116,7 @@ state.buttonReleased = function(sprite) {
         this.myButton.text = '...'; 
         this.activateScene();
     } else if (this.stageState == 'stop') {
-        this.resetCharacter();
+        this.resetStage();
         this.myButton.text = 'Start'
         this.stageState = 'init';
     } else if (this.stageState == 'complete') {
@@ -129,6 +131,22 @@ state.resetCharacter = function () {
     this.character.y = this.character.initialY - 8;
 }
 
+/**
+ * Reset all objects that should be back in the original position.
+ * Dragable redirectors are left on original place.
+ */
+state.resetStage = function() {
+    this.resetCharacter();
+    var redirectors = this.redirectorGroup.members;
+    for ( var i = 0; i < redirectors.length; i++ ) {
+        var redirector = redirectors[i];
+        if (redirector.type == 'box') {
+            redirector.x = redirector.initialX;
+            redirector.y = redirector.initialY;
+        }
+    }
+}
+
 state.startedDrag = function(sprite) {
     sprite.formerX = sprite.x;
     sprite.formerY = sprite.y;   
@@ -140,6 +158,17 @@ state.startedDrag = function(sprite) {
 state.resetDrag = function(sprite) {
     sprite.x = sprite.formerX;
     sprite.y = sprite.formerY;
+}
+
+/**
+ * Get tile index from specified coordinates.
+ */
+state.getTileIndex = function(x, y) {
+    var tile = this.tilemap.layers[0].getTileFromXY(x / 64 , y / 64);
+    if (tile == null) {
+        return 0;
+    }
+    return tile.index;
 }
 
 /**
@@ -159,8 +188,7 @@ state.stoppedDrag = function(sprite) {
     sprite.y = sprite.y - sprite.y % 64;
     
     // Make sure that we drop tile only on valid ground
-    var tile = this.tilemap.layers[0].getTileFromXY(sprite.x / 64 , sprite.y /64);
-    if ((tile.index == 0) || (tile == null)) {
+    if (this.getTileIndex(sprite.x, sprite.y) == 0) {
         this.resetDrag(sprite);
     } else {
         // Make sure that we are not dropping on another redirector object
@@ -195,8 +223,6 @@ state.update = function () {
     this.checkCollision();
 
     this.updateCharacterAnimation();
-    
-    // this.resetCharacter();
 }
 
 state.updateCharacterAnimation = function () {
@@ -212,10 +238,57 @@ state.updateCharacterAnimation = function () {
     }
 }
 
-//Resolve collisions between the character and the first layer. 
+/**
+ * Create effect based on type of redirector.
+ */
+state.applyRedirectorMechanics = function(tileX, tileY, redirector) {
+    var isRecalculationRequired = false;
+    var redirectorTileX = Math.round(redirector.x/64);
+    var redirectorTileY = Math.round(redirector.y/64);
+    
+    // Box has hit regions around. Compute based on vector of player
+    if (redirector.type == 'box') {
+        tileX+=this.character.physics.velocity.x/64;
+        tileY+=this.character.physics.velocity.y/64;
+    } 
+
+    // Check for hit
+    if ((tileX != redirectorTileX ) || (tileY != redirectorTileY)) {
+        return;
+    }
+    
+    if (redirector.type == 'vector') {
+        this.character.physics.velocity.x = redirector.affectVelocityX;
+        this.character.physics.velocity.y = redirector.affectVelocityY;
+    } else if (redirector.type == 'teleport') {
+        this.character.x = redirector.affectedX - 8;
+        this.character.y = redirector.affectedY - 8;
+    } else if (redirector.type == 'box') {
+        // Move tile when it is possible
+        if (this.getTileIndex(redirector.x + this.character.physics.velocity.x, redirector.y + this.character.physics.velocity.y) != 0) {
+            redirector.x += this.character.physics.velocity.x;
+            redirector.y += this.character.physics.velocity.y;
+        }
+        // Bounce
+        this.character.physics.velocity.x = -this.character.physics.velocity.x;
+        this.character.physics.velocity.y = -this.character.physics.velocity.y;
+        
+        // Bounce from box should relaunch direction calculation
+        // This is for the case when box lies close to redirector 
+        isRecalculationRequired = true;                
+    }
+    
+    // Correction of coordinates
+    this.character.y = Math.round(this.character.y);
+    this.character.x = Math.round(this.character.x);
+    return isRecalculationRequired;
+}
+
+/**
+ * Resolve collisions between the character and the first layer.
+ */ 
 state.checkCollision = function () {
     this.tilemap.layers[1].physics.overlapsTiles( this.character, true );
-
     
     if ((this.character.physics.velocity.x == 0) && (this.character.physics.velocity.y == 0)) {
         if (this.stageState == 'running') {
@@ -232,21 +305,20 @@ state.checkCollision = function () {
         return;
     }
 
+    var isRecalculationRequired = false;
     var redirectors = this.redirectorGroup.members;
     for ( var i = 0; i < redirectors.length; i++ ) {
-        var redirector = redirectors[i];
-        if (((Math.round(positionX/64) == Math.round(redirector.x/64) )) && (Math.round(positionY/64) == Math.round(redirector.y/64))) {
-            if (redirector.type == 'vector') {
-                this.character.physics.velocity.x = redirector.affectVelocityX;
-                this.character.physics.velocity.y = redirector.affectVelocityY;
-            } else if (redirector.type == 'teleport') {
-                this.character.x = redirector.affectedX - 8;
-                this.character.y = redirector.affectedY - 8;
-            }
-            this.character.y = Math.round(this.character.y);
-            this.character.x = Math.round(this.character.x);
+        if (this.applyRedirectorMechanics(Math.round(positionX/64), Math.round(positionY/64), redirectors[i])) {
+            isRecalculationRequired = true;
         }
     } 
+    
+    // Make the second round of calculation in case of hit of box
+    if (isRecalculationRequired) {
+        for ( var i = 0; i < redirectors.length; i++ ) {
+            this.applyRedirectorMechanics(Math.round(positionX/64), Math.round(positionY/64), redirectors[i]);
+        } 
+    }
         
     if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
         this.stageState = 'complete';
@@ -260,7 +332,11 @@ state.checkCollision = function () {
 
 }
 
-var game = new Kiwi.Game(null, 'PF 2016', levelSelectorState);
+var gameOptions = {
+	width: 840,
+	height: 600
+};
+var game = new Kiwi.Game(null, 'PF 2016', levelSelectorState, gameOptions);
 game.levelIndex = 0;
 game.states.addState(state);
 
