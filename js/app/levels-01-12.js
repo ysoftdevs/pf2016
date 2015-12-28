@@ -273,10 +273,10 @@ level9.create = function(context) {
  
     // Create redirector objects
     
-    // // Right
+    // Right
     addRedirector(context, 11, 3, 1, 0, 0);
     
-    // // Up
+    // Up
     addRedirector(context, 10, 1, 0, -1, 3);
     addRedirector(context, 5, 2, 0, -1, 3);
     
@@ -289,15 +289,36 @@ level9.create = function(context) {
 var level10 = {};
 level10.create = function(context) {
     // Define start coordinates
-    context.character.initialX = 11*64;
+    context.character.initialX = 4*64;
     context.character.initialY = 4*64;
-    context.character.initialVelocityX = 0;
-    context.character.initialVelocityY = -64;
+    context.character.initialVelocityX = 64;
+    context.character.initialVelocityY = 0;
     
     // Define finish coordinates
     context.finishMarker.x = 9*64;
-    context.finishMarker.y = 4*64;
+    context.finishMarker.y = 1*64;
  
- 
+    // Right
+    addRedirector(context, 5, 1, 1, 0, 0);
+    addRedirector(context, 5, 2, 1, 0, 0);
+    addRedirector(context, 5, 3, 1, 0, 0);
+    addRedirector(context, 5, 4, 1, 0, 0);
 
+    // Left    
+    addRedirector(context, 6, 1, -1, 0, 9);
+    addRedirector(context, 6, 2, -1, 0, 9);
+    addRedirector(context, 6, 3, -1, 0, 9);
+    addRedirector(context, 6, 4, -1, 0, 9);
+    
+    // Up
+    addRedirector(context, 7, 1, 0, -1, 3);
+    addRedirector(context, 7, 2, 0, -1, 3);
+    addRedirector(context, 7, 3, 0, -1, 3);
+    addRedirector(context, 7, 4, 0, -1, 3);
+    
+    // Down
+    addRedirector(context, 8, 1, 0, 1, 6);
+    addRedirector(context, 8, 2, 0, 1, 6);
+    addRedirector(context, 8, 3, 0, 1, 6);
+    addRedirector(context, 8, 4, 0, 1, 6);
 };
