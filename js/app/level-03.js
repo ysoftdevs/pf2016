@@ -8,10 +8,10 @@ level3.create = function(context) {
     context.character.x = 2*64 - 8;
     context.character.y = 64 - 8;
     context.character.physics.acceleration.x = 0;
-	context.character.physics.maxVelocity.y = 140;
+    context.character.physics.maxVelocity.y = 140;
     
     // Define finish coordinates
     context.finishMarker.x = 6*64;
     context.finishMarker.y = 1*64;
 }
-	
+    

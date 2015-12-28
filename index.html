@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>PF 2016</title>
-	<meta name="author" content="Juraj Michálek" />
-	<meta name="description" content="PF 2016 greeting - puzzle game - set direction for ball" />
-	
-	<script src="js/kiwi-js-v1.4.0/kiwi.js"></script>
+    <meta charset="utf-8">
+    <title>PF 2016</title>
+    <meta name="author" content="Juraj Michálek" />
+    <meta name="description" content="PF 2016 greeting - puzzle game - set direction for ball" />
+    
+    <script src="js/kiwi-js-v1.4.0/kiwi.js"></script>
     <script src="js/app/level-tools.js"></script>
-	<script src="js/app/level-selector.js"></script>
-	<script src="js/app/level-01.js"></script>
+    <script src="js/app/level-selector.js"></script>
+    <script src="js/app/level-01.js"></script>
     <script src="js/app/level-02.js"></script>
     <script src="js/app/level-03.js"></script>
     <script src="js/app/level-04.js"></script>
@@ -23,17 +23,17 @@ var state = new Kiwi.State('state');
 var levels = [level1, level2, level3, level4, level5, level6];
 
 state.preload = function() {
-	this.addJSON('level1', 'data/levels/level-01.json');
-	this.addJSON('level2', 'data/levels/level-02.json');
+    this.addJSON('level1', 'data/levels/level-01.json');
+    this.addJSON('level2', 'data/levels/level-02.json');
     this.addJSON('level3', 'data/levels/level-03.json');
     this.addJSON('level4', 'data/levels/level-04.json');
     this.addJSON('level5', 'data/levels/level-05.json');
     this.addJSON('level6', 'data/levels/level-06.json');
-	this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
+    this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
-	this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
-	this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
-	this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
+    this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
+    this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
+    this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
     this.addSpriteSheet('teleport', './data/images/gfx64/st_spitter_idle.png', 64, 64);
     this.addSpriteSheet('box', './data/images/gfx64/st_box_wood.png', 64, 64);
 }
@@ -43,28 +43,28 @@ state.velocityY = 64;
 
 state.create = function() {
     var level = levels[this.game.levelIndex - 1];
-	this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'level' + this.game.levelIndex.toString(), this.textures.base);
+    this.tilemap = new Kiwi.GameObjects.Tilemap.TileMap(this, 'level' + this.game.levelIndex.toString(), this.textures.base);
     
     this.character = new Kiwi.GameObjects.Sprite(this, this.textures.character, 0, 0);
     this.character.initialX = 2*64;
     this.character.initialY = 64;
     this.character.initialVelocityX = 0;
     this.character.initialVelocityY = this.velocityY;
-	// Hitbox is detecting collision in future step.
-	// This is little bit counter intuitive. 
-	// You have to make collision box smaller at least one step.	
+    // Hitbox is detecting collision in future step.
+    // This is little bit counter intuitive. 
+    // You have to make collision box smaller at least one step.    
     this.character.box.hitbox = new Kiwi.Geom.Rectangle( 12, 12, 58, 58 );
-	this.character.physics = this.character.components.add( new Kiwi.Components.ArcadePhysics( this.character, this.character.box ) );
+    this.character.physics = this.character.components.add( new Kiwi.Components.ArcadePhysics( this.character, this.character.box ) );
 
     this.character.animation.add('walking', [ 0, 1 ], 0.2, true);
-	this.character.animation.add('idle', [ 2, 3, 4, 5, 6, 5, 4, 3 ], 0.2, true);
-	this.character.animation.add('failed', [ 11, 10, 9, 8, 7, 8, 9, 10], 0.2, true);
+    this.character.animation.add('idle', [ 2, 3, 4, 5, 6, 5, 4, 3 ], 0.2, true);
+    this.character.animation.add('failed', [ 11, 10, 9, 8, 7, 8, 9, 10], 0.2, true);
 
-	this.redirectorGroup = new Kiwi.Group( this );
-    	
-	this.finishMarker = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 6*64, 4*64);	
-	this.finishMarker.animation.add('idle', [ 0, 1, 2, 3, 2, 1 ], 0.3, true);
-	this.finishMarker.animation.play('idle', true);
+    this.redirectorGroup = new Kiwi.Group( this );
+        
+    this.finishMarker = new Kiwi.GameObjects.Sprite(this, this.textures.finishMarker, 6*64, 4*64);  
+    this.finishMarker.animation.add('idle', [ 0, 1, 2, 3, 2, 1 ], 0.3, true);
+    this.finishMarker.animation.play('idle', true);
 
     // Ground layer
     this.addChild(this.tilemap.layers[0]);
@@ -75,51 +75,51 @@ state.create = function() {
     // Fix character coordinates and speed
     this.resetCharacter();
 
-	this.addChild(this.finishMarker);
+    this.addChild(this.finishMarker);
 
     // Walls layer
     this.addChild(this.tilemap.layers[1]);
-	
-	// Add action objects
-	this.addChild(this.redirectorGroup);
+    
+    // Add action objects
+    this.addChild(this.redirectorGroup);
 
     this.addChild(this.character);
 
-	// Sky layer
+    // Sky layer
     this.addChild(this.tilemap.layers[2]);
 
     // Create collision layer
     for(var i = 21; i < this.tilemap.tileTypes.length; i++) {
-		this.tilemap.tileTypes[i].allowCollisions = Kiwi.Components.ArcadePhysics.ANY;
-	}
+        this.tilemap.tileTypes[i].allowCollisions = Kiwi.Components.ArcadePhysics.ANY;
+    }
         
-	this.keyboard = this.game.input.keyboard;
+    this.keyboard = this.game.input.keyboard;
 
-	this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.LEFT, true);
-	this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT, true);
+    this.leftKey = this.keyboard.addKey(Kiwi.Input.Keycodes.LEFT, true);
+    this.rightKey = this.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT, true);
     //Prevent the down key from scrolling the page
-	this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN, true);
+    this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN, true);
     
     this.stageState = 'init';
-	
-	this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 6*64+16, 60, "#000", 32, 'normal', 'Impact' );
-	this.myButtonSprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 6*64, 50);
-	this.myButtonSprite.input.onUp.add( this.buttonReleased, this );	
-		
-	this.character.input.onUp.add( this.buttonReleased, this );
+    
+    this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 6*64+16, 60, "#000", 32, 'normal', 'Impact' );
+    this.myButtonSprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 6*64, 50);
+    this.myButtonSprite.input.onUp.add( this.buttonReleased, this );    
+        
+    this.character.input.onUp.add( this.buttonReleased, this );
 }
 
-state.buttonReleased = function(sprite) {	
-	if (this.stageState == 'init') {
-		this.myButton.text = '...';	
-		this.activateScene();
-	} else if (this.stageState == 'stop') {
-		this.resetCharacter();
-		this.myButton.text = 'Start'
-		this.stageState = 'init';
-	} else if (this.stageState == 'complete') {
-		game.states.switchState('levelSelector');
-	}
+state.buttonReleased = function(sprite) {   
+    if (this.stageState == 'init') {
+        this.myButton.text = '...'; 
+        this.activateScene();
+    } else if (this.stageState == 'stop') {
+        this.resetCharacter();
+        this.myButton.text = 'Start'
+        this.stageState = 'init';
+    } else if (this.stageState == 'complete') {
+        game.states.switchState('levelSelector');
+    }
 }
 
 state.resetCharacter = function () {
@@ -130,16 +130,16 @@ state.resetCharacter = function () {
 }
 
 state.startedDrag = function(sprite) {
-	sprite.formerX = sprite.x;
-	sprite.formerY = sprite.y;	 
+    sprite.formerX = sprite.x;
+    sprite.formerY = sprite.y;   
 }
 
 /**
  * Reverse effect of drag operaion. Set original coordinates.
  */
 state.resetDrag = function(sprite) {
-	sprite.x = sprite.formerX;
-	sprite.y = sprite.formerY;
+    sprite.x = sprite.formerX;
+    sprite.y = sprite.formerY;
 }
 
 /**
@@ -149,54 +149,54 @@ state.resetDrag = function(sprite) {
  * to former coordinates.
  */
 state.stoppedDrag = function(sprite) {
-	if (sprite.x % 64 > 32) {
-		sprite.x += 64;
-	}
-	if (sprite.y % 64 > 32) {
-		sprite.y += 64;
-	}
-	sprite.x = sprite.x - sprite.x % 64;
-	sprite.y = sprite.y - sprite.y % 64;
-	
-	// Make sure that we drop tile only on valid ground
-	var tile = this.tilemap.layers[0].getTileFromXY(sprite.x / 64 , sprite.y /64);
-	if ((tile.index == 0) || (tile == null)) {
-		this.resetDrag(sprite);
-	} else {
-		// Make sure that we are not dropping on another redirector object
-		var redirectors = this.redirectorGroup.members;
-		for ( var i = 0; i < redirectors.length; i++ ) {
-			var redirector = redirectors[i];
-			
-			// Skip comparision of self
-			if (sprite === redirector) {
-				continue;
-			}
-			
-			if ((sprite.x == redirector.x) && (sprite.y == redirector.y)) {
-				this.resetDrag(sprite);
-				break;
-			}
-		}
-	}
+    if (sprite.x % 64 > 32) {
+        sprite.x += 64;
+    }
+    if (sprite.y % 64 > 32) {
+        sprite.y += 64;
+    }
+    sprite.x = sprite.x - sprite.x % 64;
+    sprite.y = sprite.y - sprite.y % 64;
+    
+    // Make sure that we drop tile only on valid ground
+    var tile = this.tilemap.layers[0].getTileFromXY(sprite.x / 64 , sprite.y /64);
+    if ((tile.index == 0) || (tile == null)) {
+        this.resetDrag(sprite);
+    } else {
+        // Make sure that we are not dropping on another redirector object
+        var redirectors = this.redirectorGroup.members;
+        for ( var i = 0; i < redirectors.length; i++ ) {
+            var redirector = redirectors[i];
+            
+            // Skip comparision of self
+            if (sprite === redirector) {
+                continue;
+            }
+            
+            if ((sprite.x == redirector.x) && (sprite.y == redirector.y)) {
+                this.resetDrag(sprite);
+                break;
+            }
+        }
+    }
 }
 
 state.activateScene = function () {
     this.character.physics.velocity.x = this.character.initialVelocityX;
     this.character.physics.velocity.y = this.character.initialVelocityY;
-	this.stageState = 'running';
+    this.stageState = 'running';
 }
 
 state.update = function () {
-	//Update all the gameobjects
-	Kiwi.State.prototype.update.call(this);
+    //Update all the gameobjects
+    Kiwi.State.prototype.update.call(this);
 
-	//Update physics
-	this.checkCollision();
+    //Update physics
+    this.checkCollision();
 
-	this.updateCharacterAnimation();
-	
-	// this.resetCharacter();
+    this.updateCharacterAnimation();
+    
+    // this.resetCharacter();
 }
 
 state.updateCharacterAnimation = function () {
@@ -204,38 +204,38 @@ state.updateCharacterAnimation = function () {
     if(( this.character.physics.velocity.y != 0 ) || (this.character.physics.velocity.x != 0)) {
         this.character.animation.play('walking', false);
     } else {
-		if (this.stageState == 'stop') {
-			this.character.animation.play('failed', false);	
-		} else {
-        	this.character.animation.play('idle', false);
-		}
+        if (this.stageState == 'stop') {
+            this.character.animation.play('failed', false); 
+        } else {
+            this.character.animation.play('idle', false);
+        }
     }
 }
 
 //Resolve collisions between the character and the first layer. 
 state.checkCollision = function () {
-	this.tilemap.layers[1].physics.overlapsTiles( this.character, true );
+    this.tilemap.layers[1].physics.overlapsTiles( this.character, true );
 
-	
-	if ((this.character.physics.velocity.x == 0) && (this.character.physics.velocity.y == 0)) {
-		if (this.stageState == 'running') {
-			this.stageState = 'stop';
-			this.myButton.text = 'Restart'
-		}
-		return;
-	}
+    
+    if ((this.character.physics.velocity.x == 0) && (this.character.physics.velocity.y == 0)) {
+        if (this.stageState == 'running') {
+            this.stageState = 'stop';
+            this.myButton.text = 'Restart'
+        }
+        return;
+    }
 
-	// Make collision detection only when ball is fully on the same tile
-	var positionX = Math.round(this.character.x) + 8;
-	var positionY = Math.round(this.character.y) + 8;
-	if ((Math.round(positionX) % 64 != 0) || (Math.round(positionY)% 64 != 0)) {
-		return;
-	}
+    // Make collision detection only when ball is fully on the same tile
+    var positionX = Math.round(this.character.x) + 8;
+    var positionY = Math.round(this.character.y) + 8;
+    if ((Math.round(positionX) % 64 != 0) || (Math.round(positionY)% 64 != 0)) {
+        return;
+    }
 
-	var redirectors = this.redirectorGroup.members;
-	for ( var i = 0; i < redirectors.length; i++ ) {
-		var redirector = redirectors[i];
-		if (((Math.round(positionX/64) == Math.round(redirector.x/64) )) && (Math.round(positionY/64) == Math.round(redirector.y/64))) {
+    var redirectors = this.redirectorGroup.members;
+    for ( var i = 0; i < redirectors.length; i++ ) {
+        var redirector = redirectors[i];
+        if (((Math.round(positionX/64) == Math.round(redirector.x/64) )) && (Math.round(positionY/64) == Math.round(redirector.y/64))) {
             if (redirector.type == 'vector') {
                 this.character.physics.velocity.x = redirector.affectVelocityX;
                 this.character.physics.velocity.y = redirector.affectVelocityY;
@@ -243,20 +243,20 @@ state.checkCollision = function () {
                 this.character.x = redirector.affectedX - 8;
                 this.character.y = redirector.affectedY - 8;
             }
-			this.character.y = Math.round(this.character.y);
-			this.character.x = Math.round(this.character.x);
-		}
-	} 
-		
-	if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
-		this.stageState = 'complete';
-		this.myButton.text = 'Next->'
-		this.addChild( this.myButtonSprite );
-		this.addChild( this.myButton );
+            this.character.y = Math.round(this.character.y);
+            this.character.x = Math.round(this.character.x);
+        }
+    } 
+        
+    if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
+        this.stageState = 'complete';
+        this.myButton.text = 'Next->'
+        this.addChild( this.myButtonSprite );
+        this.addChild( this.myButton );
 
-		this.character.physics.velocity.x = 0;
-		this.character.physics.velocity.y = 0;
-	}
+        this.character.physics.velocity.x = 0;
+        this.character.physics.velocity.y = 0;
+    }
 
 }
 
