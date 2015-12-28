@@ -16,12 +16,13 @@
     <script src="js/app/level-05.js"></script>
     <script src="js/app/level-06.js"></script>
     <script src="js/app/level-07.js"></script>
+    <script src="js/app/level-08.js"></script>
 </head>
 <body>
 
 <script>
 var state = new Kiwi.State('state');
-var levels = [level1, level2, level3, level4, level5, level6, level7];
+var levels = [level1, level2, level3, level4, level5, level6, level7, level8];
 
 state.preload = function() {
     this.addJSON('level1', 'data/levels/level-01.json');
@@ -31,6 +32,7 @@ state.preload = function() {
     this.addJSON('level5', 'data/levels/level-05.json');
     this.addJSON('level6', 'data/levels/level-06.json');
     this.addJSON('level7', 'data/levels/level-07.json');
+    this.addJSON('level8', 'data/levels/level-08.json');
     this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
     this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
     this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
@@ -38,6 +40,9 @@ state.preload = function() {
     this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
     this.addSpriteSheet('teleport', './data/images/gfx64/st_spitter_idle.png', 64, 64);
     this.addSpriteSheet('box', './data/images/gfx64/st_box_wood.png', 64, 64);
+    this.addSpriteSheet('switch', './data/images/gfx64/st_switch.png', 64, 64);
+    this.addSpriteSheet('laserBeam', './data/images/gfx64/it_laser.png', 64, 64);
+    this.addSpriteSheet('laser', './data/images/gfx64/st_laser.png', 64, 64);
 }
 
 state.velocityX = 64;
@@ -143,6 +148,12 @@ state.resetStage = function() {
         if (redirector.type == 'box') {
             redirector.x = redirector.initialX;
             redirector.y = redirector.initialY;
+        } else if (redirector.type == 'switch') {
+            redirector.cellIndex = redirector.initialCellIndex;
+        } else if (redirector.type == 'laserBeam') {
+            redirector.visible = redirector.initialVisible;
+        } else if (redirector.type == 'laser') {
+            redirector.animation.play(redirector.initialAnimation, true);
         }
     }
 }
@@ -238,6 +249,32 @@ state.updateCharacterAnimation = function () {
     }
 }
 
+state.turnOff = function(items) {
+    for (var i=0; i!=items.length; i++) {
+        var item = items[i];
+        if (item.type == 'laserBeam') {
+            item.visible = false;
+        } else if (item.type == 'switch') {
+            item.cellIndex = 2;
+        } else {
+            item.animation.play('idle');
+        }
+    }
+}
+
+state.turnOn = function(items) {
+    for (var i=0; i!=items.length; i++) {
+        var item = items[i];
+        if (item.type == 'laserBeam') {
+            item.visible = true;
+        } else if (item.type == 'switch') {
+            item.cellIndex = 0;        
+        } else {
+            item.animation.play('burning');
+        }
+    }
+}
+
 /**
  * Create effect based on type of redirector.
  */
@@ -276,6 +313,20 @@ state.applyRedirectorMechanics = function(tileX, tileY, redirector) {
         // Bounce from box should relaunch direction calculation
         // This is for the case when box lies close to redirector 
         isRecalculationRequired = true;                
+    } else if (redirector.type == 'switch') {
+        // Flip the switch
+        if (redirector.cellIndex == 0) {
+            redirector.cellIndex = 2;
+            this.turnOff(redirector.linkedItems);
+        } else {
+            redirector.cellIndex = 0;
+            this.turnOn(redirector.linkedItems);
+        }
+    } else if (redirector.type == 'laserBeam') {
+        if (redirector.visible) {
+            this.character.physics.velocity.x = 0;
+            this.character.physics.velocity.y = 0;
+        }
     }
     
     // Correction of coordinates

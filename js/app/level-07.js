@@ -48,6 +48,7 @@ level7.create = function(context) {
     // Add moving box    
     var box2 = new Kiwi.GameObjects.Sprite(context, context.textures.box, 9*64, 3*64);	
     box2.type = 'box';
+    box2.cellIndex = 1;
     box2.initialX = 9*64;
     box2.initialY = 3*64;
     context.redirectorGroup.addChild(box2);
