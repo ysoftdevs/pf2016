@@ -10,23 +10,8 @@ level6.create = function(context) {
     context.finishMarker.x = 9*64;
     context.finishMarker.y = 4*64;
 
-    // Add teleport    
-    var teleport = new Kiwi.GameObjects.Sprite(context, context.textures.teleport, 3*64, 3*64);	
-	teleport.animation.add('idle', [ 0, 1, 2, 3 ], 0.3, true);
-	teleport.animation.play('idle', true);
-    teleport.type = 'teleport';
-    teleport.affectedX = 10*64;
-    teleport.affectedY = 1*64;
-    context.redirectorGroup.addChild(teleport);
-
-    // Add target teleport marker
-    var teleportTarget = new Kiwi.GameObjects.Sprite(context, context.textures.teleport, 10*64, 1*64);	
-	teleportTarget.animation.add('idle', [ 3, 2, 1, 0 ], 0.3, true);
-	teleportTarget.animation.play('idle', true);
-    teleportTarget.type = 'teleport';
-    teleportTarget.affectedX = 3*64;
-    teleportTarget.affectedY = 3*64;
-    context.redirectorGroup.addChild(teleportTarget);
+    // Add teleports  
+    addTeleportPair(context, 3, 3, 10, 1)
  
     // Create redirector objects
     addRedirector(context, 3, 1, -1, 0, 9);
