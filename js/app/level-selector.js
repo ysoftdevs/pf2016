@@ -36,16 +36,27 @@ levelSelectorState.create = function() {
 
 	for (var i=1; i<levels.length+1; i++) {
 
-        var sprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 40+counterX*140, 50+counterY*80);
-		sprite.levelIndex = i;
-		this.addChild( sprite );
+        var button = new Kiwi.Plugins.Primitives.Rectangle( {
+            x: 110+counterX*120,
+            y: 50+counterY*70,
+            state: this,
+            width: 100,
+            height: 50,
+            color: '2160e1',
+            strokeColor: '050e20',
+            centerOnTransform: true
+        } );
+        this.addChild(button);
+
+		button.levelIndex = i;
 
 		if (this.levelStatus[i-1] == 'locked') {
-            sprite.cellIndex = 1;
-        } else {
-            var text = new Kiwi.GameObjects.Textfield( this, i.toString(), 100+counterX*140, 60+counterY*80, "#1d5f0e", 32, 'normal', 'Impact' );
+            var text = new Kiwi.GameObjects.Textfield( this, "\uf023", 100+counterX*120, 32+counterY*70, "#cb6f25", 32, 'normal', 'FontAwesome' );
             this.addChild(text);
-            sprite.input.onUp.add( this.buttonReleased, this );	
+        } else {
+            var text = new Kiwi.GameObjects.Textfield( this, i.toString(), 100+counterX*120, 30+counterY*70, "#fbd712", 32, 'normal', 'Impact' );
+            this.addChild(text);
+            button.input.onUp.add( this.buttonReleased, this );	
         }
         
         counterX++;
