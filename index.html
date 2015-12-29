@@ -6,6 +6,8 @@
     <meta name="author" content="Juraj Michálek" />
     <meta name="description" content="PF 2016 greeting - puzzle game - set direction for ball" />
     
+    <link rel="stylesheet" href="css/pf2016.css" type="text/css" />
+    
     <script src="js/kiwi-js-v1.4.0/kiwi.js"></script>
     <script src="js/app/level-tools.js"></script>
     <script src="js/app/level-selector.js"></script>
@@ -387,6 +389,7 @@ var gameOptions = {
 	height: 600
 };
 var game = new Kiwi.Game(null, 'PF 2016', levelSelectorState, gameOptions);
+game.stage.color = "121d35";
 game.levelIndex = 0;
 game.states.addState(state);
 
