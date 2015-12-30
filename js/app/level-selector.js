@@ -32,11 +32,14 @@ levelSelectorState.create = function() {
         }
     }
 
+    this.addChild(new Kiwi.GameObjects.Textfield( this, "Puzzle Game", 200, 10, "#fbd712", 32, 'normal', 'Impact' ));
+    var baseY = 90;
+    // List of levels
 	for (var i=1; i<levels.length+1; i++) {
 
         var button = new Kiwi.Plugins.Primitives.Rectangle( {
             x: 110+counterX*120,
-            y: 50+counterY*70,
+            y: baseY+50+counterY*70,
             state: this,
             width: 100,
             height: 50,
@@ -49,10 +52,10 @@ levelSelectorState.create = function() {
 		button.levelIndex = i;
 
 		if (this.levelStatus[i-1] == 'locked') {
-            var lock = new Kiwi.GameObjects.Sprite(this, this.textures.lock, 100+counterX*120, 32+counterY*70);
+            var lock = new Kiwi.GameObjects.Sprite(this, this.textures.lock, 100+counterX*120, baseY+32+counterY*70);
             this.addChild(lock);
         } else {
-            var text = new Kiwi.GameObjects.Textfield( this, i.toString(), 100+counterX*120, 30+counterY*70, "#fbd712", 32, 'normal', 'Impact' );
+            var text = new Kiwi.GameObjects.Textfield( this, i.toString(), 100+counterX*120, baseY+30+counterY*70, "#fbd712", 32, 'normal', 'Impact' );
             this.addChild(text);
             button.input.onUp.add( this.buttonReleased, this );	
         }
