@@ -336,13 +336,24 @@ state.checkCollision = function () {
     }
         
     if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
-        this.stageState = 'complete';
-        this.myButton.text = 'Next'
-        this.addChild( this.myButtonSprite );
-        this.addChild( this.myButton );
-
-        this.character.physics.velocity.x = 0;
-        this.character.physics.velocity.y = 0;
+        this.stageComplete();
     }
 
+}
+
+state.displayCongratulation = function() {
+    this.myButton.text = 'Next'    
+    this.addChild( this.myButtonSprite );
+    this.addChild( this.myButton );
+}
+
+state.stageComplete = function() {
+    this.stageState = 'complete';
+    
+    this.timer = this.game.time.clock.createTimer('time', 1, 1, true);
+
+    this.timer.createTimerEvent( Kiwi.Time.TimerEvent.TIMER_STOP, this.displayCongratulation, this );
+
+    this.character.physics.velocity.x = 0;
+    this.character.physics.velocity.y = 0;
 }
