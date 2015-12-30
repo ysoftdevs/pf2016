@@ -1,31 +1,5 @@
 var state = new Kiwi.State('state');
 
-
-state.preload = function() {
-    this.addJSON('level1', 'data/levels/level-01.json');
-    this.addJSON('level2', 'data/levels/level-02.json');
-    this.addJSON('level3', 'data/levels/level-03.json');
-    this.addJSON('level4', 'data/levels/level-04.json');
-    this.addJSON('level5', 'data/levels/level-05.json');
-    this.addJSON('level6', 'data/levels/level-06.json');
-    this.addJSON('level7', 'data/levels/level-07.json');
-    this.addJSON('level8', 'data/levels/level-08.json');
-    this.addJSON('level9', 'data/levels/level-09.json');
-    this.addJSON('level10', 'data/levels/level-10.json');
-    this.addJSON('level11', 'data/levels/level-11.json');
-    this.addJSON('level12', 'data/levels/level-12.json');
-    this.addSpriteSheet('base', './data/images/gfx64/tiles.png', 64, 64);
-    this.addSpriteSheet('character', './data/images/gfx64/marble_black.png', 80, 80 );
-    this.addSpriteSheet('oneWay', './data/images/gfx64/st_oneway.png', 64, 64 );
-    this.addSpriteSheet('finishMarker', './data/images/gfx64/finish_marker.png', 64, 64 );
-    this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
-    this.addSpriteSheet('teleport', './data/images/gfx64/st_spitter_idle.png', 64, 64);
-    this.addSpriteSheet('box', './data/images/gfx64/st_box_wood.png', 64, 64);
-    this.addSpriteSheet('switch', './data/images/gfx64/st_switch.png', 64, 64);
-    this.addSpriteSheet('laserBeam', './data/images/gfx64/it_laser.png', 64, 64);
-    this.addSpriteSheet('laser', './data/images/gfx64/st_laser.png', 64, 64);
-}
-
 state.velocityX = 64;
 state.velocityY = 64;
 
@@ -89,9 +63,17 @@ state.create = function() {
     this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN, true);
     
     this.stageState = 'init';
-    
-    this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 6*64+16, 60, "#000", 32, 'normal', 'Impact' );
-    this.myButtonSprite = new Kiwi.GameObjects.Sprite(this, this.textures.button, 6*64, 50);
+    this.myButtonSprite = new Kiwi.Plugins.Primitives.Rectangle( {
+            x: 4*64,
+            y: 100,
+            state: this,
+            width: 100,
+            height: 50,
+            color: '2160e1',
+            strokeColor: '050e20',
+            centerOnTransform: false
+        } );
+    this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 4*64+16, 100, "#fbd712", 32, 'normal', 'Impact' );
     this.myButtonSprite.input.onUp.add( this.buttonReleased, this );    
         
     this.character.input.onUp.add( this.buttonReleased, this );
@@ -355,7 +337,7 @@ state.checkCollision = function () {
         
     if (((Math.round(positionX/64) == Math.round(this.finishMarker.x/64) )) && (Math.round(positionY/64) == Math.round(this.finishMarker.y/64))) {
         this.stageState = 'complete';
-        this.myButton.text = 'Next->'
+        this.myButton.text = 'Next'
         this.addChild( this.myButtonSprite );
         this.addChild( this.myButton );
 

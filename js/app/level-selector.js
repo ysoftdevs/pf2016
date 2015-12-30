@@ -9,8 +9,6 @@ levelSelectorState.save = function() {
 }
 
 levelSelectorState.preload = function() {
-	this.addSpriteSheet('button', './data/images/gfx64/button.png', 128, 64 );
-        
     if (this.game.saveManager.exists('levelStatus')) {
         this.levelStatus = this.game.saveManager.getData('levelStatus');
     } else {
@@ -51,8 +49,8 @@ levelSelectorState.create = function() {
 		button.levelIndex = i;
 
 		if (this.levelStatus[i-1] == 'locked') {
-            var text = new Kiwi.GameObjects.Textfield( this, "\uf023", 100+counterX*120, 32+counterY*70, "#cb6f25", 32, 'normal', 'FontAwesome' );
-            this.addChild(text);
+            var lock = new Kiwi.GameObjects.Sprite(this, this.textures.lock, 100+counterX*120, 32+counterY*70);
+            this.addChild(lock);
         } else {
             var text = new Kiwi.GameObjects.Textfield( this, i.toString(), 100+counterX*120, 30+counterY*70, "#fbd712", 32, 'normal', 'Impact' );
             this.addChild(text);

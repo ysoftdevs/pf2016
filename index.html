@@ -4,16 +4,14 @@
     <meta charset="utf-8">
     <title>PF 2016</title>
     <meta name="author" content="Juraj Michálek" />
-    <meta name="description" content="PF 2016 greeting - puzzle game - set direction for ball" />
+    <meta name="description" content="PF 2016 greeting - puzzle game" />
     
     <link rel="stylesheet" href="css/pf2016.css" type="text/css" />
-    
-    <!-- <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet"> -->
-    <link href="css/font-awesome.min.css" rel="stylesheet">
     
     <script src="js/kiwi-js-v1.4.0/kiwi.js"></script>
     <script src="js/save-manager-1.0.2/save-manager.js"></script>
     <script src="js/primitives-plugin-1.0.4/primitives.min.js"></script>
+    <script src="js/app/loading-state.js"></script>
     <script src="js/app/level-tools.js"></script>
     <script src="js/app/level-selector.js"></script>
     <script src="js/app/game-state.js"></script>
@@ -32,10 +30,11 @@ var gameOptions = {
 	height: 600,
     plugins: ["SaveGame"]
 };
-var game = new Kiwi.Game(null, 'PF 2016', levelSelectorState, gameOptions);
+var game = new Kiwi.Game(null, 'PF 2016', loadingState, gameOptions);
 game.stage.color = "121d35";
 game.levelIndex = 0;
 game.levelStatus = 'none';
+game.states.addState(levelSelectorState);
 game.states.addState(state);
 
 </script>
