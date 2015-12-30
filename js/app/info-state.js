@@ -6,7 +6,7 @@ infoState.create = function() {
         y: 72,
         alpha: 0.5,
         state: this,
-        width: 460,
+        width: 470,
         height: 300,
         color: '189608',
         strokeColor: 'fbd712',
