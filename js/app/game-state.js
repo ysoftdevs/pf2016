@@ -49,6 +49,11 @@ state.create = function() {
 
     // Sky layer
     this.addChild(this.tilemap.layers[2]);
+    
+    this.backButton = new Kiwi.GameObjects.Sprite(this, this.textures.base, 0, 0);
+    this.backButton.cellIndex = 24;
+    this.backButton.input.onUp.add(this.backButtonReleased, this);
+    this.addChild(this.backButton);
 
     // Create collision layer
     for(var i = 21; i < this.tilemap.tileTypes.length; i++) {
@@ -65,6 +70,14 @@ state.create = function() {
     this.stageState = 'init';
         
     this.character.input.onUp.add( this.buttonReleased, this );
+}
+
+state.backButtonReleased = function(sprite, mouse) {
+    if ((mouse.x > 48) && (mouse.y > 48)) {
+        return;
+    }
+    this.stageState == 'none'
+    game.states.switchState('levelSelector');
 }
 
 state.buttonReleased = function(sprite) {   
@@ -294,7 +307,6 @@ state.checkCollision = function () {
     if ((this.character.physics.velocity.x == 0) && (this.character.physics.velocity.y == 0)) {
         if (this.stageState == 'running') {
             this.stageState = 'stop';
-            this.myButton.text = 'Restart'
         }
         return;
     }
