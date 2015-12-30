@@ -14,6 +14,7 @@
     <script src="js/app/loading-state.js"></script>
     <script src="js/app/level-tools.js"></script>
     <script src="js/app/level-selector.js"></script>
+    <script src="js/app/instructions-state.js"></script>
     <script src="js/app/game-state.js"></script>
     <script src="js/app/levels-01-12.js"></script>
 </head>
@@ -35,6 +36,7 @@ game.stage.color = "121d35";
 game.levelIndex = 0;
 game.levelStatus = 'none';
 game.states.addState(levelSelectorState);
+game.states.addState(instructionsState);
 game.states.addState(state);
 
 </script>

@@ -70,5 +70,5 @@ levelSelectorState.create = function() {
 
 levelSelectorState.buttonReleased = function(sprite) {
 	game.levelIndex = sprite.levelIndex;
-	game.states.switchState('state');
+	game.states.switchState('instructionsState');
 }
