@@ -344,7 +344,7 @@ state.displayCongratulation = function() {
     var messageWidth = 100;
     if (this.game.levelIndex == 12) {
         message = "PF 2016";
-        messageWidth = 134;
+        messageWidth = 144;
     }
 
     var messageBox = new Kiwi.Plugins.Primitives.Rectangle( {
