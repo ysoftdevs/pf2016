@@ -1,4 +1,4 @@
-PF 2016 - Work in progress version
+PF 2016 - Puzzle Game
 ----
 
 This small game is electronic card for New Year 2016.

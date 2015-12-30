@@ -65,7 +65,34 @@ levelSelectorState.create = function() {
             counterX = 0;
             counterY++;
         }
+        
+        var ysoftLogo = new Kiwi.GameObjects.Sprite(this, this.textures.base, 270, 320);
+        ysoftLogo.cellIndex = 25;
+        ysoftLogo.input.onUp.add(this.ysoftLogoClick, this);	
+        this.addChild(ysoftLogo);
+        
+        var githubLogo = new Kiwi.GameObjects.Sprite(this, this.textures.base, 360, 320);
+        githubLogo.cellIndex = 26;
+        githubLogo.input.onUp.add(this.githubLogoClick, this);
+        this.addChild(githubLogo);
+        
+        var info = new Kiwi.GameObjects.Sprite(this, this.textures.base, 190, 320);
+        info.cellIndex = 27;
+        info.input.onUp.add(this.infoClick, this);
+        this.addChild(info);
 	}
+}
+
+levelSelectorState.ysoftLogoClick = function() {
+    window.location.href = "http://www.ysofters.com/pf2016";
+}
+
+levelSelectorState.githubLogoClick = function() {
+    window.location.href = "https://github.com/ysoftdevs/pf2016";
+}
+
+levelSelectorState.infoClick = function() {
+    game.states.switchState('infoState');
 }
 
 levelSelectorState.buttonReleased = function(sprite) {
