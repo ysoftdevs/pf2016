@@ -63,29 +63,15 @@ state.create = function() {
     this.keyboard.addKey(Kiwi.Input.Keycodes.DOWN, true);
     
     this.stageState = 'init';
-    this.myButtonSprite = new Kiwi.Plugins.Primitives.Rectangle( {
-            x: 4*64,
-            y: 100,
-            state: this,
-            width: 100,
-            height: 50,
-            color: '2160e1',
-            strokeColor: '050e20',
-            centerOnTransform: false
-        } );
-    this.myButton = new Kiwi.GameObjects.Textfield( this, "Start", 4*64+16, 100, "#fbd712", 32, 'normal', 'Impact' );
-    this.myButtonSprite.input.onUp.add( this.buttonReleased, this );    
         
     this.character.input.onUp.add( this.buttonReleased, this );
 }
 
 state.buttonReleased = function(sprite) {   
     if (this.stageState == 'init') {
-        this.myButton.text = '...'; 
         this.activateScene();
     } else if (this.stageState == 'stop') {
         this.resetStage();
-        this.myButton.text = 'Start'
         this.stageState = 'init';
     } else if (this.stageState == 'complete') {
         game.levelStatus = 'complete';
@@ -342,9 +328,44 @@ state.checkCollision = function () {
 }
 
 state.displayCongratulation = function() {
-    this.myButton.text = 'Next'    
-    this.addChild( this.myButtonSprite );
-    this.addChild( this.myButton );
+    var message = "Next";
+    var messageWidth = 100;
+    if (this.game.levelIndex == 12) {
+        message = "PF 2016";
+        messageWidth = 124;
+    }
+
+    var messageBox = new Kiwi.Plugins.Primitives.Rectangle( {
+            x: 3*64,
+            y: 72,
+            alpha: 0.5,
+            state: this,
+            width: 320,
+            height: 200,
+            color: '063500',
+            strokeColor: '050e20',
+            centerOnTransform: false
+        } );        
+        
+    var nextButton = new Kiwi.Plugins.Primitives.Rectangle( {
+            x: 5*64,
+            y: 200,
+            alpha: 0.5,
+            state: this,
+            width: messageWidth,
+            height: 50,
+            color: '2160e1',
+            strokeColor: '050e20',
+            centerOnTransform: false
+        } );
+    var congratulationText = new Kiwi.GameObjects.Textfield( this, "Congratulations", 4*64, 100, "#fbd712", 32, 'normal', 'Impact' );
+    var nextButtonText = new Kiwi.GameObjects.Textfield( this, message, 5*64+16, 204, "#fbd712", 32, 'normal', 'Impact' );
+    nextButton.input.onUp.add( this.buttonReleased, this );    
+
+    this.addChild(messageBox);
+    this.addChild(congratulationText)
+    this.addChild(nextButton);
+    this.addChild(nextButtonText);
 }
 
 state.stageComplete = function() {
