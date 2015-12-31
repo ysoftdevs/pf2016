@@ -1,4 +1,7 @@
 var levelSelectorState = new Kiwi.State('levelSelector');
+levelSelectorState.levelStatus = ['unlocked', 'locked', 'locked', 'locked', 'locked', 'locked', 'locked', 'locked', 'locked',
+            'locked', 'locked', 'locked'
+        ];
 
 /**
  * Save status of locks.
@@ -11,10 +14,7 @@ levelSelectorState.save = function() {
 levelSelectorState.preload = function() {
     if (this.game.saveManager.exists('levelStatus')) {
         this.levelStatus = this.game.saveManager.getData('levelStatus');
-    } else {
-        this.levelStatus = ['unlocked', 'locked', 'locked', 'locked', 'locked', 'locked', 'locked', 'locked', 'locked',
-            'locked', 'locked', 'locked'
-        ];
+    } else { 
         this.save();
     }        
 }
